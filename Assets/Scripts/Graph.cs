@@ -17,39 +17,25 @@ public class Graph : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        string[] nodeLines = NodesFile.text.Split('\n');
-        for (int i = 1; i < nodeLines.Length; i++)
-        {
-            if(nodeLines[i].Length < 5)
-                continue;
 
-            int id = int.Parse(nodeLines[i].Split(';')[0]);
-            float x = float.Parse(nodeLines[i].Split(';')[2]) / 1000;
-            float y = float.Parse(nodeLines[i].Split(';')[3]) / 1000;
-            GameObject nodeObject = Instantiate(NodePrefab, transform);
-            Node node = nodeObject.GetComponent<Node>();
-            node.Instantiate(x, y, id);
-            nodes.Add(node.Id, node);
-        }
+        InitNodes();
+
+        InitEdges();
         
-        string[] edgeLines = EdgesFile.text.Split('\n');
-        for (int i = 1; i < edgeLines.Length; i++)
-        {
-            if (edgeLines[i].Length < 5)
-                continue;
+        //FindShortestPath(3, 27);
+    }
 
-            int idFrom = int.Parse(edgeLines[i].Split(';')[1]);
-            Node nodeFrom = nodes[idFrom];
-            int idTo = int.Parse(edgeLines[i].Split(';')[2]);
-            Node nodeTo = nodes[idTo];
-            GameObject edgeObject1 = Instantiate(EdgePrefab, transform);
-            Edge edge = edgeObject1.GetComponent<Edge>();
-            edge.Instantiate(nodeFrom, nodeTo);
-            nodeFrom.NeighborIds.Add(nodeTo.Id);
-            nodeTo.NeighborIds.Add(nodeFrom.Id);
-            edges.Add(edge);
-        }
-        FindShortestPath(3, 27);
+    public void FirstPointHandler()
+    {
+        transform.position = Camera.main.transform.position;
+        transform.Translate(Vector3.down * 0.5f);
+    }
+
+    public void SecondPointHandler()
+    {
+        Vector3 camPos = Camera.main.transform.position;
+        Vector3 goalPos = camPos + Vector3.down * 0.5f;
+        transform.LookAt(goalPos);
     }
 
     public void FindShortestPath(int startNodeId, int endNodeId)
@@ -116,13 +102,46 @@ public class Graph : MonoBehaviour {
 
         Debug.Log("FEJL");
     }
+
+    void InitNodes()
+    {
+        string[] nodeLines = NodesFile.text.Split('\n');
+        for (int i = 1; i < nodeLines.Length; i++)
+        {
+            if (nodeLines[i].Length < 5)
+                continue;
+            string[] lineValues = nodeLines[i].Split(';');
+            int id = int.Parse(lineValues[0]);
+            string tag = lineValues[1];
+            float x = float.Parse(lineValues[2]) / 1000;
+            float y = float.Parse(lineValues[3]) / 1000;
+            GameObject nodeObject = Instantiate(NodePrefab, transform);
+            Node node = nodeObject.GetComponent<Node>();
+            node.Instantiate(x, y, id, tag);
+            nodes.Add(node.Id, node);
+        }
+    }
     
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-    
+    void InitEdges()
+    {
+        string[] edgeLines = EdgesFile.text.Split('\n');
+        for (int i = 1; i < edgeLines.Length; i++)
+        {
+            if (edgeLines[i].Length < 5)
+                continue;
+
+            int idFrom = int.Parse(edgeLines[i].Split(';')[1]);
+            Node nodeFrom = nodes[idFrom];
+            int idTo = int.Parse(edgeLines[i].Split(';')[2]);
+            Node nodeTo = nodes[idTo];
+            GameObject edgeObject1 = Instantiate(EdgePrefab, transform);
+            Edge edge = edgeObject1.GetComponent<Edge>();
+            edge.Instantiate(nodeFrom, nodeTo);
+            nodeFrom.NeighborIds.Add(nodeTo.Id);
+            nodeTo.NeighborIds.Add(nodeFrom.Id);
+            edges.Add(edge);
+        }
+    }
 }
 
 
