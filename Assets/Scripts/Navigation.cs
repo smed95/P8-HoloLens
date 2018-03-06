@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Navigation : MonoBehaviour {
+public class Navigation : MonoBehaviour
+{
+
+    public GameObject DebugTextDisplay;
 
 	// Use this for initialization
 	void Start () {
@@ -17,5 +20,6 @@ public class Navigation : MonoBehaviour {
     public void OpenNavigationMenu()
     {
         Debug.Log("Hello");
+        DebugTextDisplay.GetComponent<DebugScript>().SetDebugMessage("It works!");
     }
 }
