@@ -25,18 +25,16 @@ public class Graph : MonoBehaviour {
         //FindShortestPath(3, 27);
     }
 
-    public void FirstPointHandler()
+    public void FirstPointHandler(Vector3 pos)
     {
-        Vector3 pos = Camera.main.transform.position;
         pos.y = 0;
         transform.position = pos;
     }
 
-    public void SecondPointHandler()
+    public void SecondPointHandler(Vector3 pos)
     {
-        Vector3 camPos = Camera.main.transform.position;
-        camPos.y = 0;
-        transform.LookAt(camPos);
+        pos.y = 0;
+        transform.LookAt(pos);
     }
 
     public void FindShortestPath(int startNodeId, int endNodeId)
