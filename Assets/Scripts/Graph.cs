@@ -7,7 +7,11 @@ using UnityEngine;
 public class Graph : MonoBehaviour {
 
     List<Edge> edges = new List<Edge>();
+    // Dictionary with the id of the node and the node itself
     Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+    // Dictionary with the id of the node and the name of the node
+    public Dictionary<int, string> destinationNodes = new Dictionary<int, string>();
+    public bool isNodesInitialized = false;
 
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
@@ -120,7 +124,12 @@ public class Graph : MonoBehaviour {
             Node node = nodeObject.GetComponent<Node>();
             node.Instantiate(x, y, id, tag);
             nodes.Add(node.Id, node);
+            if(tag.Contains("(Endpoint)"))
+            {
+                destinationNodes.Add(node.Id, node.Tag);
+            }
         }
+        isNodesInitialized = true;
     }
     
     void InitEdges()
@@ -143,6 +152,7 @@ public class Graph : MonoBehaviour {
             edges.Add(edge);
         }
     }
+
 }
 
 
