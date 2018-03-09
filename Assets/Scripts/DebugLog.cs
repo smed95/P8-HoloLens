@@ -1,21 +1,60 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class DebugLog : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    public void LogThis(string message)
+public class DebugLog : MonoBehaviour
+{
+
+
+    private Text debugText;
+
+    // Use this for initialization
+    void Start()
     {
-        Debug.Log(message);
+        debugText = GetComponent<Text>();
+
+
     }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    private void OnEnable()
+    {
+        Application.logMessageReceived += HandleDebugLog;
+    }
+
+    private void OnDisable()
+    {
+        Application.logMessageReceived -= HandleDebugLog;
+    }
+
+
+
+    void HandleDebugLog(string logString, string stackTrace, LogType type)
+    {
+        // In the first frames, the text has not been initialized
+        // and therefore throws a NullReferenceException, which we ignore.
+
+        try
+        {
+            debugText.text = logString;
+
+
+        }
+      
+        catch(NullReferenceException e)
+        {
+
+        }
+
+    }
+
+
 }
