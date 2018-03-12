@@ -9,8 +9,10 @@ public class Graph : MonoBehaviour {
     List<Edge> edges = new List<Edge>();
     // Dictionary with the id of the node and the node itself
     Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+    // 
+    Dictionary<int, GameObject> initializedNodes = new Dictionary<int, GameObject>();
     // Dictionary with the id of the node and the name of the node
-    public Dictionary<int, string> destinationNodes = new Dictionary<int, string>();
+    public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
     public bool isNodesInitialized = false;
 
     public GameObject NodePrefab;
@@ -43,8 +45,9 @@ public class Graph : MonoBehaviour {
         transform.LookAt(camPos);
     }
 
-    public void FindShortestPath(int startNodeId, int endNodeId)
+    public void FindShortestPath(/*int startNodeId,*/ int endNodeId)
     {
+        int startNodeId = FindClosestNode();
         List<int> closedSet = new List<int>();
         List<int> openSet = new List<int>();
         openSet.Add(startNodeId);
@@ -124,9 +127,10 @@ public class Graph : MonoBehaviour {
             Node node = nodeObject.GetComponent<Node>();
             node.Instantiate(x, y, id, tag);
             nodes.Add(node.Id, node);
+            initializedNodes.Add(node.Id, nodeObject);
             if(tag.Contains("(Endpoint)"))
             {
-                destinationNodes.Add(node.Id, node.Tag);
+                destinationNodes.Add(node.Id, node);
             }
         }
         isNodesInitialized = true;
@@ -151,6 +155,25 @@ public class Graph : MonoBehaviour {
             nodeTo.NeighborIds.Add(nodeFrom.Id);
             edges.Add(edge);
         }
+    }
+
+    private int FindClosestNode()
+    {
+        int shortestDistanceNodeId = 0;
+        float currentShortestDistance = 100000000;
+        Vector3 currentPos = Camera.main.transform.position;
+
+        foreach (var node in initializedNodes)
+        {
+            Vector3 nodePos = new Vector3(node.Value.transform.position.x, node.Value.transform.position.y, node.Value.transform.position.z);
+            float dist = Vector3.Distance(nodePos, currentPos);
+            if (dist < currentShortestDistance)
+            {
+                currentShortestDistance = dist;
+                shortestDistanceNodeId = node.Key;
+            }
+        }
+        return shortestDistanceNodeId;
     }
 
 }

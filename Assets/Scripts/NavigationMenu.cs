@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Navigation : MonoBehaviour
+public class NavigationMenu : MonoBehaviour
 {
-
     public GameObject DebugTextDisplay;
 
 	// Use this for initialization
@@ -21,5 +20,11 @@ public class Navigation : MonoBehaviour
     {
         Debug.Log("Hello");
         DebugTextDisplay.GetComponent<DebugScript>().SetDebugMessage("It works!");
+        transform.gameObject.SetActive(true);
+    }
+
+    public void CloseNavigationMenu()
+    {
+        transform.gameObject.SetActive(false);
     }
 }
