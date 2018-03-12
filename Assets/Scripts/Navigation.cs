@@ -20,6 +20,5 @@ public class Navigation : MonoBehaviour
     public void OpenNavigationMenu()
     {
         Debug.Log("Hello");
-        DebugTextDisplay.GetComponent<DebugScript>().SetDebugMessage("It works!");
     }
 }
