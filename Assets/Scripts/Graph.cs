@@ -4,7 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Graph : MonoBehaviour {
+public class Graph : MonoBehaviour
+{
+
+    int idCounter = 1;
+    int MillimeterToMeter = 1000;
 
     List<Edge> edges = new List<Edge>();
     Dictionary<int, Node> nodes = new Dictionary<int, Node>();
@@ -14,14 +18,15 @@ public class Graph : MonoBehaviour {
 
     public TextAsset NodesFile;
     public TextAsset EdgesFile;
+    public TextAsset LinesFile;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
+        InitLine();
 
-        InitNodes();
+        //InitPoint();
 
-        InitEdges();
-        
         //FindShortestPath(3, 27);
     }
 
@@ -61,7 +66,7 @@ public class Graph : MonoBehaviour {
             int currentId = -1;
             foreach (int id in openSet)
             {
-                if(fScore[id] < minFScore)
+                if (fScore[id] < minFScore)
                 {
                     minFScore = fScore[id];
                     currentId = id;
@@ -104,6 +109,53 @@ public class Graph : MonoBehaviour {
         Debug.Log("FEJL");
     }
 
+    void InitLine()
+    {
+        string[] lineSplit = LinesFile.text.Split('\n');
+        for (int i = 1; i < lineSplit.Length; i++)
+        {
+            string[] lineValues = lineSplit[i].Split(',');
+            int nodeIdStart = idCounter;
+            int nodeIdEnd = idCounter + 1;
+            float nodeStartX = float.Parse(lineValues[1]) / MillimeterToMeter;
+            float nodeStartY = float.Parse(lineValues[2]) / MillimeterToMeter;
+            float nodeEndX = float.Parse(lineValues[3]) / MillimeterToMeter;
+            float nodeEndY = float.Parse(lineValues[4]) / MillimeterToMeter;
+            float dist = float.Parse(lineValues[5]) / MillimeterToMeter;
+
+            GameObject nodeObject1 = Instantiate(NodePrefab, transform);
+            Node node1 = nodeObject1.GetComponent<Node>();
+            GameObject nodeObject2 = Instantiate(NodePrefab, transform);
+            Node node2 = nodeObject2.GetComponent<Node>();
+
+            node1.Instantiate(nodeStartX, nodeStartY, nodeIdStart, "");
+            nodes.Add(node1.Id, node1);
+            node2.Instantiate(nodeEndX, nodeEndY, nodeIdEnd, "");
+            nodes.Add(node2.Id, node2);
+
+            Node nodeFrom = nodes[nodeIdStart];
+            Node nodeTo = nodes[nodeIdEnd];
+            GameObject edgeObject = Instantiate(EdgePrefab, transform);
+            Edge edge = edgeObject.GetComponent<Edge>();
+            edge.Instantiate(nodeFrom, nodeTo, dist);
+            nodeFrom.NeighborIds.Add(nodeTo.Id);
+            nodeTo.NeighborIds.Add(nodeFrom.Id);
+            edges.Add(edge);
+
+            idCounter += 2;
+        }
+    }
+
+    private void InitPoint()
+    {
+        string[] nodeSplit = NodesFile.text.Split('\n');
+        for (int i = 1; i < nodeSplit.Length; i++)
+        {
+
+        }
+
+    }
+
     void InitNodes()
     {
         string[] nodeLines = NodesFile.text.Split('\n');
@@ -122,7 +174,7 @@ public class Graph : MonoBehaviour {
             nodes.Add(node.Id, node);
         }
     }
-    
+
     void InitEdges()
     {
         string[] edgeLines = EdgesFile.text.Split('\n');
@@ -137,7 +189,7 @@ public class Graph : MonoBehaviour {
             Node nodeTo = nodes[idTo];
             GameObject edgeObject1 = Instantiate(EdgePrefab, transform);
             Edge edge = edgeObject1.GetComponent<Edge>();
-            edge.Instantiate(nodeFrom, nodeTo);
+            edge.Instantiate(nodeFrom, nodeTo, 0);
             nodeFrom.NeighborIds.Add(nodeTo.Id);
             nodeTo.NeighborIds.Add(nodeFrom.Id);
             edges.Add(edge);
