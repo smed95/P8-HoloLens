@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class Navigate : MonoBehaviour, IInputClickHandler, IInputHandler
 {
-    Destinations destinations;
+    NavigationMenu navigationMenu;
 
     // Use this for initialization
     void Start()
     {
-        destinations = GetComponentInParent<Destinations>();
+        navigationMenu = GetComponentInParent<NavigationMenu>();
     }
 
     // Update is called once per frame
@@ -23,7 +23,7 @@ public class Navigate : MonoBehaviour, IInputClickHandler, IInputHandler
     public void OnInputClicked(InputClickedEventData eventData)
     {
         Debug.Log("Hello");
-        //SortDestinations();
+        //StartNavigation();
     }
     public void OnInputDown(InputEventData eventData)
     { Debug.Log("Hello"); }
@@ -32,9 +32,6 @@ public class Navigate : MonoBehaviour, IInputClickHandler, IInputHandler
 
     void StartNavigation()
     {
-        if (GetComponentInChildren<Text>().text == "Clear sort")
-            destinations.SortDestinations("");
-        else
-            destinations.SortDestinations(GetComponentInChildren<Text>().text);
+        navigationMenu.Navigate(GetComponentInChildren<Text>().text);
     }
 }

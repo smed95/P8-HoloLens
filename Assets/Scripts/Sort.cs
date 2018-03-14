@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class Sort : MonoBehaviour, IInputClickHandler, IInputHandler
 {
-    Destinations destinations;
+    NavigationMenu navigationMenu;
 
 	// Use this for initialization
 	void Start () {
-        destinations = GetComponentInParent<Destinations>();
+        navigationMenu = GetComponentInParent<NavigationMenu>();
 	}
 	
 	// Update is called once per frame
@@ -20,19 +20,19 @@ public class Sort : MonoBehaviour, IInputClickHandler, IInputHandler
 
     public void OnInputClicked(InputClickedEventData eventData)
     {
-        Debug.Log("Hello");
-        //SortDestinations();
+        //Debug.Log("Hello");
+        SortDestinations();
     }
     public void OnInputDown(InputEventData eventData)
-    { Debug.Log("Hello"); }
+    { /*Debug.Log("Hello");*/ }
     public void OnInputUp(InputEventData eventData)
     { }
 
     public void SortDestinations()
     {
         if (GetComponentInChildren<Text>().text == "Clear sort")
-            destinations.SortDestinations("");
+            navigationMenu.SortDestinations("");
         else
-            destinations.SortDestinations(GetComponentInChildren<Text>().text);
+            navigationMenu.SortDestinations(GetComponentInChildren<Text>().text);
     }
 }

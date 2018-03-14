@@ -1026,7 +1026,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1106591295}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2057707271}
+        m_MethodName: ClearSort
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1106591295
@@ -1381,7 +1392,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e66b263ee71b7941bedede12cec83f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceFromCamera: 2
 --- !u!1001 &1473395643
 Prefab:
   m_ObjectHideFlags: 0
@@ -1464,6 +1474,8 @@ MonoBehaviour:
     KeyCode: 8
   - Keyword: Navigate
     KeyCode: 43
+  - Keyword: Close navigate
+    KeyCode: 45
   recognitionConfidenceLevel: 1
 --- !u!114 &1544215887
 MonoBehaviour:
@@ -1526,8 +1538,25 @@ MonoBehaviour:
     Response:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 700691420}
-          m_MethodName: OpenNavigationMenu
+        - m_Target: {fileID: 2057707271}
+          m_MethodName: OpenNavigaitonMenu
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+  - Keyword: Close navigate
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2057707271}
+          m_MethodName: CloseNavigationMenu
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1783,6 +1812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   graph: {fileID: 777451366}
+  navigationMenu: {fileID: 700691419}
   navigationMenuCanvas: {fileID: 169258342}
   prevButton: {fileID: 1426835421}
   nextButton: {fileID: 200722996}
