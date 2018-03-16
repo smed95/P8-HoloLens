@@ -7,11 +7,12 @@ using UnityEngine;
 public class Graph : MonoBehaviour
 {
 
-    int idCounter = 1;
+    int idCounter = 0;
     int MillimeterToMeter = 1000;
 
     List<Edge> edges = new List<Edge>();
     Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+
 
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
@@ -23,11 +24,36 @@ public class Graph : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        InitLine();
+        InitNodes();
 
-        //InitPoint();
+        InitPointsOfInterest();
+
+        InitNeighbours();
 
         //FindShortestPath(3, 27);
+    }
+
+    private void InitPointsOfInterest()
+    {
+        string[] nodeSplit = NodesFile.text.Split('\n');
+        for (int i = 1; i < nodeSplit.Length; i++)
+        {
+            string[] lineValues = nodeSplit[i].Split(',');
+            float pointX = float.Parse(lineValues[1]) / MillimeterToMeter;
+            float pointY = float.Parse(lineValues[2]) / MillimeterToMeter;
+            string pointName = lineValues[3];
+            string pointType = lineValues[4];
+
+            foreach (var node in nodes.Values)
+            {
+                if (pointX == node.X && pointY == node.Y)
+                {
+                    node.Name = pointName;
+                    node.Type = pointType;
+                }
+            }
+
+        }
     }
 
     public void FirstPointHandler()
@@ -109,92 +135,118 @@ public class Graph : MonoBehaviour
         Debug.Log("FEJL");
     }
 
-    void InitLine()
+    void InitNodes()
     {
         string[] lineSplit = LinesFile.text.Split('\n');
         for (int i = 1; i < lineSplit.Length; i++)
         {
             string[] lineValues = lineSplit[i].Split(',');
-            int nodeIdStart = idCounter;
-            int nodeIdEnd = idCounter + 1;
+            float nodeStartX = float.Parse(lineValues[1]) / MillimeterToMeter;
+            float nodeStartY = float.Parse(lineValues[2]) / MillimeterToMeter;
+            float nodeEndX = float.Parse(lineValues[3]) / MillimeterToMeter;
+            float nodeEndY = float.Parse(lineValues[4]) / MillimeterToMeter;
+ 
+            if (!nodes.Any(x => x.Value.X == nodeStartX && x.Value.Y == nodeStartY))
+            {
+                GameObject nodeObject1 = Instantiate(NodePrefab, transform);
+                Node node1 = nodeObject1.GetComponent<Node>();
+                node1.Instantiate(nodeStartX, nodeStartY, idCounter);
+                nodes.Add(node1.Id, node1);
+                idCounter++;
+            }
+            if (!nodes.Any(x => x.Value.X == nodeEndX && x.Value.Y == nodeEndY))
+            {
+                GameObject nodeObject2 = Instantiate(NodePrefab, transform);
+                Node node2 = nodeObject2.GetComponent<Node>();
+                node2.Instantiate(nodeEndX, nodeEndY, idCounter);
+                nodes.Add(node2.Id, node2);
+                idCounter++;
+            }
+
+            //Node nodeFrom = nodes[nodeIdStart];
+            //Node nodeTo = nodes[nodeIdEnd];
+            //GameObject edgeObject = Instantiate(EdgePrefab, transform);
+            //Edge edge = edgeObject.GetComponent<Edge>();
+            //edge.Instantiate(nodeFrom, nodeTo, dist);
+            //nodeFrom.NeighborIds.Add(nodeTo.Id);
+            //nodeTo.NeighborIds.Add(nodeFrom.Id);
+            //edges.Add(edge);
+        }
+    }
+
+    private void InitNeighbours()
+    {
+        string[] lineSplit = LinesFile.text.Split('\n');
+        for (int i = 1; i < lineSplit.Length; i++)
+        {
+            string[] lineValues = lineSplit[i].Split(',');
             float nodeStartX = float.Parse(lineValues[1]) / MillimeterToMeter;
             float nodeStartY = float.Parse(lineValues[2]) / MillimeterToMeter;
             float nodeEndX = float.Parse(lineValues[3]) / MillimeterToMeter;
             float nodeEndY = float.Parse(lineValues[4]) / MillimeterToMeter;
             float dist = float.Parse(lineValues[5]) / MillimeterToMeter;
 
-            GameObject nodeObject1 = Instantiate(NodePrefab, transform);
-            Node node1 = nodeObject1.GetComponent<Node>();
-            GameObject nodeObject2 = Instantiate(NodePrefab, transform);
-            Node node2 = nodeObject2.GetComponent<Node>();
-
-            node1.Instantiate(nodeStartX, nodeStartY, nodeIdStart, "");
-            nodes.Add(node1.Id, node1);
-            node2.Instantiate(nodeEndX, nodeEndY, nodeIdEnd, "");
-            nodes.Add(node2.Id, node2);
-
-            Node nodeFrom = nodes[nodeIdStart];
-            Node nodeTo = nodes[nodeIdEnd];
-            GameObject edgeObject = Instantiate(EdgePrefab, transform);
-            Edge edge = edgeObject.GetComponent<Edge>();
-            edge.Instantiate(nodeFrom, nodeTo, dist);
-            nodeFrom.NeighborIds.Add(nodeTo.Id);
-            nodeTo.NeighborIds.Add(nodeFrom.Id);
-            edges.Add(edge);
-
-            idCounter += 2;
+            foreach (var nodeStart in nodes.Values)
+            {
+                if (nodeStart.X == nodeStartX && nodeStart.Y == nodeStartY)
+                {
+                    foreach (var nodeEnd in nodes.Values)
+                    {
+                        if (nodeEnd.X == nodeEndX && nodeEnd.Y == nodeEndY && nodeStart != nodeEnd)
+                        {
+                            Node nodeFrom = nodes[nodeStart.Id];
+                            Node nodeTo = nodes[nodeEnd.Id];
+                            GameObject edgeObject = Instantiate(EdgePrefab, transform);
+                            Edge edge = edgeObject.GetComponent<Edge>();
+                            edge.Instantiate(nodeFrom, nodeTo, dist);
+                            nodeFrom.NeighborIds.Add(nodeTo.Id);
+                            nodeTo.NeighborIds.Add(nodeFrom.Id);
+                            edges.Add(edge);
+                        }
+                    }
+                }
+            }
         }
     }
+    //void InitNodes()
+    //{
+    //    string[] nodeLines = NodesFile.text.Split('\n');
+    //    for (int i = 1; i < nodeLines.Length; i++)
+    //    {
+    //        if (nodeLines[i].Length < 5)
+    //            continue;
+    //        string[] lineValues = nodeLines[i].Split(';');
+    //        int id = int.Parse(lineValues[0]);
+    //        string tag = lineValues[1];
+    //        float x = float.Parse(lineValues[2]) / MillimeterToMeter;
+    //        float y = float.Parse(lineValues[3]) / MillimeterToMeter;
+    //        GameObject nodeObject = Instantiate(NodePrefab, transform);
+    //        Node node = nodeObject.GetComponent<Node>();
+    //        node.Instantiate(x, y, id, tag);
+    //        nodes.Add(node.Id, node);
+    //    }
+    //}
 
-    private void InitPoint()
-    {
-        string[] nodeSplit = NodesFile.text.Split('\n');
-        for (int i = 1; i < nodeSplit.Length; i++)
-        {
+//    void InitEdges()
+//    {
+//        string[] edgeLines = EdgesFile.text.Split('\n');
+//        for (int i = 1; i < edgeLines.Length; i++)
+//        {
+//            if (edgeLines[i].Length < 5)
+//                continue;
 
-        }
-
-    }
-
-    void InitNodes()
-    {
-        string[] nodeLines = NodesFile.text.Split('\n');
-        for (int i = 1; i < nodeLines.Length; i++)
-        {
-            if (nodeLines[i].Length < 5)
-                continue;
-            string[] lineValues = nodeLines[i].Split(';');
-            int id = int.Parse(lineValues[0]);
-            string tag = lineValues[1];
-            float x = float.Parse(lineValues[2]) / 1000;
-            float y = float.Parse(lineValues[3]) / 1000;
-            GameObject nodeObject = Instantiate(NodePrefab, transform);
-            Node node = nodeObject.GetComponent<Node>();
-            node.Instantiate(x, y, id, tag);
-            nodes.Add(node.Id, node);
-        }
-    }
-
-    void InitEdges()
-    {
-        string[] edgeLines = EdgesFile.text.Split('\n');
-        for (int i = 1; i < edgeLines.Length; i++)
-        {
-            if (edgeLines[i].Length < 5)
-                continue;
-
-            int idFrom = int.Parse(edgeLines[i].Split(';')[1]);
-            Node nodeFrom = nodes[idFrom];
-            int idTo = int.Parse(edgeLines[i].Split(';')[2]);
-            Node nodeTo = nodes[idTo];
-            GameObject edgeObject1 = Instantiate(EdgePrefab, transform);
-            Edge edge = edgeObject1.GetComponent<Edge>();
-            edge.Instantiate(nodeFrom, nodeTo, 0);
-            nodeFrom.NeighborIds.Add(nodeTo.Id);
-            nodeTo.NeighborIds.Add(nodeFrom.Id);
-            edges.Add(edge);
-        }
-    }
+//            int idFrom = int.Parse(edgeLines[i].Split(';')[1]);
+//            Node nodeFrom = nodes[idFrom];
+//            int idTo = int.Parse(edgeLines[i].Split(';')[2]);
+//            Node nodeTo = nodes[idTo];
+//            GameObject edgeObject1 = Instantiate(EdgePrefab, transform);
+//            Edge edge = edgeObject1.GetComponent<Edge>();
+//            edge.Instantiate(nodeFrom, nodeTo, 0);
+//            nodeFrom.NeighborIds.Add(nodeTo.Id);
+//            nodeTo.NeighborIds.Add(nodeFrom.Id);
+//            edges.Add(edge);
+//        }
+//    }
 }
 
 
