@@ -18,10 +18,11 @@ public class Edge : MonoBehaviour {
 		
 	}
 
-    public void Instantiate(Node node1, Node node2)
+    public void Instantiate(Node node1, Node node2, float dist)
     {
         this.node1 = node1;
         this.node2 = node2;
+        this.dist = dist;
         UpdatePosition();
     }
 
