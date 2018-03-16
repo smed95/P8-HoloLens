@@ -8,7 +8,16 @@ public class Node : MonoBehaviour {
     public float Y { get; private set; }
     public int Id { get; private set; }
     public List<int> NeighborIds = new List<int>();
-    public string Tag { get; private set; }
+    public string Type { get; set; }
+    public string Name
+    {
+        get { return name; }
+        set
+        {
+            this.name = value;
+            GetComponentInChildren<TextMesh>().text = name;
+        }
+    }
 
     // Use this for initialization
     void Start () {
@@ -20,13 +29,14 @@ public class Node : MonoBehaviour {
 		
 	}
 
-    public void Instantiate(float x, float y, int id, string tag)
+    public void Instantiate(float x, float y, int id, string type = "", string name = "")
     {
         X = x;
         Y = y;
         Id = id;
-        Tag = tag;
+        Type = type;
+        Name = name;
         transform.Translate(new Vector3(x, 0f, y));
-        GetComponentInChildren<TextMesh>().text = tag;
+        GetComponentInChildren<TextMesh>().text = name;
     }
 }
