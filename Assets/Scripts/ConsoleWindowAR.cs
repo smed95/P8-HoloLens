@@ -7,6 +7,10 @@ public class ConsoleWindowAR : MonoBehaviour {
 
     //This struct type is the type recieved error/warning messages are converted to
     //We can also make messages of this type.
+
+    //The console only displays Log messages through HandleLog
+    //So any msgs we create and exception messages through Application.logMessageReceived.
+
     struct Log
     {
         public string message;
@@ -20,11 +24,12 @@ public class ConsoleWindowAR : MonoBehaviour {
     GameObject debugCanvas;
     GameObject debugError;
     GameObject debugConsole;
+    GameObject panel;
+   
 
-    bool showing = false;
+    bool showing;
 
-    //clearCount is supposed to set limit of amount of log items shown
-    public int clearCount = 5;
+   
 
 
     static readonly Dictionary<LogType, Color> logTypeColors = new Dictionary<LogType, Color>()
@@ -39,62 +44,42 @@ public class ConsoleWindowAR : MonoBehaviour {
     private void OnEnable()
     {
         Application.logMessageReceived += HandleLog;
+        Debug.Log("DebugConsole enabled");
 
         debugWindow = GameObject.Find("DebugText");
         debugCanvas = GameObject.Find("DebugCanvas");
         debugConsole = GameObject.Find("DebugConsole");
+       
         text = debugWindow.GetComponent<Text>();
+        
         showing = true;
 
         Debug.Log("Debugging Enabled");
+        Debug.Log("Log count is " + logs.Count);
+        ClearDebugConsole();
+        //Note Vuforia Init is called after this, on the first init, which fills the console.
+        //Then Display is Opaque and StartVuforia.
     }
+
+
 
     private void OnDisable()
     {
+        Debug.Log("DebugConsole disabled");
         //LogMessages are no longer with the Handlelog delegate when inactive. 
         Application.logMessageReceived -= HandleLog;
+        showing = false;
     }
 
 
     private void Update()
     {
         //Finally works, maybe do this depending on text size, not log count.
-        if(logs.Count > 9)
+        //Bugs when using values fetched from a field
+        if(logs.Count > 12)
         {
             ClearDebugConsole();
         }
-        if(Input.GetKeyDown("2"))
-        {
-            GenerateRandomMessage();
-        }
-        if(Input.GetKeyDown("3"))
-        {
-            ClearDebugConsole();
-        }
-        if (Input.GetKeyDown("4"))
-        {
-            OpenDebugConsole();
-        }
-        if (Input.GetKeyDown("5"))
-        {
-            CloseDebugConsole();
-        }
-    }
-
-
-    public void OpenDebugConsole()
-    {
-        Debug.Log("Entered OpenKeyword");
-        debugConsole.SetActive(true);
-        showing = true;
-    }
-
-    public void CloseDebugConsole()
-    {
-        Debug.Log("Entered CloseKeyword");
-        debugConsole.SetActive(false);
-        showing = false;
-
     }
 
     public void ClearDebugConsole()
@@ -103,16 +88,25 @@ public class ConsoleWindowAR : MonoBehaviour {
         text.text = "";
     }
 
-    void HandleLog(string message, string stackTrace, LogType type)
+    public void ToggleDebugConsole()
     {
+        //SetActive calls will call OnEnable/OnDisable.
         if(showing == false)
         {
-            return;
+            debugConsole.SetActive(true);
         }
-        string nullstring = "";
-        text.text = nullstring;
-        string temp = text.text;
+        else if(showing == true)
+        {
+            debugConsole.SetActive(false);
+        }      
+    }
 
+    void HandleLog(string message, string stackTrace, LogType type)
+    {
+        if(showing == false) return; 
+        text.text = "";
+     
+        //Adds the HandleLog params to a new log object
         logs.Add(new Log()
         {
             message = message,
@@ -123,14 +117,48 @@ public class ConsoleWindowAR : MonoBehaviour {
         for (int i = 0; i < logs.Count; i++)
         {
             var log = logs[i];
-            text.color = logTypeColors[log.type];
-            text.text += temp + "\n" + log.message;
-            text.text += "\n " + log.stackTrace;
+            //Previous approach with text color to most recent error msg type color.
+            //text.color = logTypeColors[log.type];
+            
+            
+            //Color is now added for each individual error/warning msg 
+            var color = ColorUtility.ToHtmlStringRGB(logTypeColors[log.type]);
+            text.text += "<color=#" + color + "> " + "\n" + log.message + "</color>";
+            text.text += "<color=#" + color + "> " + "\n " + log.stackTrace + "</color>";
         }
+    }
+
+    public void ShowLogNoTrace()
+    {
+        //Only difference is removed the line containing stackTrace.
+        text.text = "";
+        for (int i = 0; i < logs.Count; i++)
+        {
+            var log = logs[i];
+
+            var color = ColorUtility.ToHtmlStringRGB(logTypeColors[log.type]);
+            text.text += "<color=#" + color + "> " + "\n" + log.message + "</color>";
+        }
+    }
+
+    public void IncrementFontSize()
+    {
+        
+        int fontSize = text.fontSize;
+        fontSize++;
+        text.fontSize = fontSize;
+    }
+
+    public void DecrementFontSize()
+    {
+        int fontSize = text.fontSize;
+        fontSize--;
+        text.fontSize = fontSize;
     }
     
     public void GenerateRandomMessage()
     {
+        
         string str;
         int i = Random.Range(1, 20);
         str = Random.Range(0.0001f, 9999.0f).ToString();
