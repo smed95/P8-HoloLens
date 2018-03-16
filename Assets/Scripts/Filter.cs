@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Sort : MonoBehaviour, IInputClickHandler, IInputHandler
+public class Filter : MonoBehaviour, IInputClickHandler, IInputHandler
 {
     NavigationMenu navigationMenu;
 
@@ -21,18 +21,18 @@ public class Sort : MonoBehaviour, IInputClickHandler, IInputHandler
     public void OnInputClicked(InputClickedEventData eventData)
     {
         //Debug.Log("Hello");
-        SortDestinations();
+        FilterDestinations();
     }
     public void OnInputDown(InputEventData eventData)
     { /*Debug.Log("Hello");*/ }
     public void OnInputUp(InputEventData eventData)
     { }
 
-    public void SortDestinations()
+    public void FilterDestinations()
     {
-        if (GetComponentInChildren<Text>().text == "Clear sort")
-            navigationMenu.SortDestinations("");
+        if (GetComponentInChildren<Text>().text == "Clear filter")
+            navigationMenu.FilterDestinations("");
         else
-            navigationMenu.SortDestinations(GetComponentInChildren<Text>().text);
+            navigationMenu.FilterDestinations(GetComponentInChildren<Text>().text);
     }
 }
