@@ -11,6 +11,7 @@ public class Graph : MonoBehaviour
     int MillimeterToMeter = 1000;
 
     List<Edge> edges = new List<Edge>();
+    // Contains ID for a node and the node reference
     Dictionary<int, Node> nodes = new Dictionary<int, Node>();
 
 
@@ -30,30 +31,7 @@ public class Graph : MonoBehaviour
 
         InitNeighbours();
 
-        //FindShortestPath(3, 27);
-    }
-
-    private void InitPointsOfInterest()
-    {
-        string[] nodeSplit = NodesFile.text.Split('\n');
-        for (int i = 1; i < nodeSplit.Length; i++)
-        {
-            string[] lineValues = nodeSplit[i].Split(',');
-            float pointX = float.Parse(lineValues[1]) / MillimeterToMeter;
-            float pointY = float.Parse(lineValues[2]) / MillimeterToMeter;
-            string pointName = lineValues[3];
-            string pointType = lineValues[4];
-
-            foreach (var node in nodes.Values)
-            {
-                if (pointX == node.X && pointY == node.Y)
-                {
-                    node.Name = pointName;
-                    node.Type = pointType;
-                }
-            }
-
-        }
+        FindShortestPath(62, 32);
     }
 
     public void FirstPointHandler()
@@ -162,15 +140,29 @@ public class Graph : MonoBehaviour
                 nodes.Add(node2.Id, node2);
                 idCounter++;
             }
+        }
+    }
 
-            //Node nodeFrom = nodes[nodeIdStart];
-            //Node nodeTo = nodes[nodeIdEnd];
-            //GameObject edgeObject = Instantiate(EdgePrefab, transform);
-            //Edge edge = edgeObject.GetComponent<Edge>();
-            //edge.Instantiate(nodeFrom, nodeTo, dist);
-            //nodeFrom.NeighborIds.Add(nodeTo.Id);
-            //nodeTo.NeighborIds.Add(nodeFrom.Id);
-            //edges.Add(edge);
+    private void InitPointsOfInterest()
+    {
+        string[] nodeSplit = NodesFile.text.Split('\n');
+        for (int i = 1; i < nodeSplit.Length; i++)
+        {
+            string[] lineValues = nodeSplit[i].Split(',');
+            float pointX = float.Parse(lineValues[1]) / MillimeterToMeter;
+            float pointY = float.Parse(lineValues[2]) / MillimeterToMeter;
+            string pointName = lineValues[3];
+            string pointType = lineValues[4];
+
+            foreach (var node in nodes.Values)
+            {
+                if (pointX == node.X && pointY == node.Y)
+                {
+                    node.Name = pointName;
+                    node.Type = pointType;
+                }
+            }
+
         }
     }
 
