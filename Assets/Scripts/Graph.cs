@@ -24,7 +24,6 @@ public class Graph : MonoBehaviour
     public GameObject EdgePrefab;
 
     public TextAsset NodesFile;
-    public TextAsset EdgesFile;
     public TextAsset LinesFile;
 
     // Use this for initialization
@@ -36,7 +35,7 @@ public class Graph : MonoBehaviour
 
         InitNeighbours();
 
-        FindShortestPath(62, 32);
+        //FindShortestPath(62, 32);
     }
 
     public void FirstPointHandler()
@@ -136,6 +135,7 @@ public class Graph : MonoBehaviour
                 Node node1 = nodeObject1.GetComponent<Node>();
                 node1.Instantiate(nodeStartX, nodeStartY, idCounter);
                 nodes.Add(node1.Id, node1);
+                initializedNodes.Add(node1.Id, node1.gameObject);
                 idCounter++;
             }
             if (!nodes.Any(x => x.Value.X == nodeEndX && x.Value.Y == nodeEndY))
@@ -144,6 +144,7 @@ public class Graph : MonoBehaviour
                 Node node2 = nodeObject2.GetComponent<Node>();
                 node2.Instantiate(nodeEndX, nodeEndY, idCounter);
                 nodes.Add(node2.Id, node2);
+                initializedNodes.Add(node2.Id, node2.gameObject);
                 idCounter++;
             }
         }
@@ -167,9 +168,9 @@ public class Graph : MonoBehaviour
                 {
                     node.Name = pointName;
                     node.Type = pointType;
+                    destinationNodes.Add(node.Id, node);
                 }
             }
-
         }
     }
 

@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114026105100748704}
   - component: {fileID: 114396924455534582}
   m_Layer: 0
-  m_Name: SortButton
+  m_Name: FilterButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

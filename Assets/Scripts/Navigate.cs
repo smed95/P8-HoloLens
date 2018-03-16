@@ -23,7 +23,7 @@ public class Navigate : MonoBehaviour, IInputClickHandler, IInputHandler
     public void OnInputClicked(InputClickedEventData eventData)
     {
         Debug.Log("Hello");
-        //StartNavigation();
+        StartNavigation();
     }
     public void OnInputDown(InputEventData eventData)
     { Debug.Log("Hello"); }

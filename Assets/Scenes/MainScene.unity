@@ -551,7 +551,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1307cbc6f4c1c40bb0bf860985718e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugTextDisplay: {fileID: 1469970331}
 --- !u!4 &700691421
 Transform:
   m_ObjectHideFlags: 0
@@ -789,11 +788,8 @@ MonoBehaviour:
   isNodesInitialized: 0
   NodePrefab: {fileID: 1368605397661378, guid: ef8744f808715374a95037042e47ba6e, type: 2}
   EdgePrefab: {fileID: 1314633805402196, guid: f50cbbcceb6030b4186ba298c8e4af5c, type: 2}
-  NodesFile: {fileID: 0}
-  EdgesFile: {fileID: 0}
+  NodesFile: {fileID: 4900000, guid: c682607cda4528240951cfc1ba38e91c, type: 3}
   LinesFile: {fileID: 4900000, guid: 710f5244700986444a546488be6fa51a, type: 3}
-  NodesFile: {fileID: 4900000, guid: aff41114d17b3e74fb6e47c476787248, type: 3}
-  EdgesFile: {fileID: 4900000, guid: 74a54caf29857e040b4b254384eaf2db, type: 3}
 --- !u!1 &1033988950
 GameObject:
   m_ObjectHideFlags: 0
@@ -861,7 +857,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Clear sort
+  m_Text: Clear filter
 --- !u!222 &1033988953
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -955,7 +951,7 @@ GameObject:
   - component: {fileID: 1106591294}
   - component: {fileID: 1106591293}
   m_Layer: 0
-  m_Name: ClearSort
+  m_Name: ClearFilter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

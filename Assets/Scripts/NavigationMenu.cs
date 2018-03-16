@@ -22,7 +22,7 @@ public class NavigationMenu : MonoBehaviour
     // A dictionary containing all the id of the node and the gameobject of the button
     Dictionary<int, GameObject> buttonsInScene = new Dictionary<int, GameObject>();
     // Different tags, which is to be used to make the different filter functionalities.
-    List<string> differentTags = new List<string>();
+    List<string> differentTypes = new List<string>();
     // A Button object for the next and previous button
     public Button prevButton;
     public Button nextButton;
@@ -52,19 +52,19 @@ public class NavigationMenu : MonoBehaviour
             // Getting the different tags needed from the destinations nodes
             foreach (var dn in destinationNodes)
             {
-                if (!differentTags.Contains(dn.Value.Tag))
+                if (!differentTypes.Contains(dn.Value.Type))
                 {
-                    differentTags.Add(dn.Value.Tag);
+                    differentTypes.Add(dn.Value.Type);
                 }
             }
             
             // Setting the height of the canvas, to adjust to the amount of buttons needed in the UI
             RectTransform rt = navigationMenuCanvas.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(300, CalculateCanvasHeight(destinationNodes.Count, differentTags.Count + 1));
+            rt.sizeDelta = new Vector2(300, CalculateCanvasHeight(destinationNodes.Count, differentTypes.Count + 1));
 
             // Setting the height of the panel(called Background), to adjust to the amount of buttons needed in the UI
             RectTransform rectT = GetComponent<RectTransform>();
-            rectT.sizeDelta = new Vector2(300, CalculateCanvasHeight(destinationNodes.Count, differentTags.Count + 1));
+            rectT.sizeDelta = new Vector2(300, CalculateCanvasHeight(destinationNodes.Count, differentTypes.Count + 1));
 
             SetFilterButtons();
 
@@ -83,7 +83,7 @@ public class NavigationMenu : MonoBehaviour
         else
             nodesHeight = 175;
         // Added 85 to get the right y placement, for the first buttons.
-        float filterHeight = (Mathf.Ceil(tagCount / 3) * 30) + 85;
+        float filterHeight = (Mathf.Ceil(tagCount / 3) * 30) + 85 + 25;
         return nodesHeight + filterHeight;
     }
 
@@ -103,7 +103,7 @@ public class NavigationMenu : MonoBehaviour
                 destinationButton.transform.localPosition = new Vector3(leftX, _y, 0);
                 destinationButton.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 destinationButton.transform.localScale = new Vector3(1, 1, 1);
-                destinationButton.GetComponentInChildren<Text>().text = dn.Value.Tag;
+                destinationButton.GetComponentInChildren<Text>().text = dn.Value.Name;
             }
             else if (i % 2 == 1)
             {
@@ -111,15 +111,15 @@ public class NavigationMenu : MonoBehaviour
                 destinationButton.transform.localPosition = new Vector3(rightX, _y, 0);
                 destinationButton.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 destinationButton.transform.localScale = new Vector3(1, 1, 1);
-                destinationButton.GetComponentInChildren<Text>().text = dn.Value.Tag;
+                destinationButton.GetComponentInChildren<Text>().text = dn.Value.Name;
                 _y -= 35;
             }
             buttonsInScene.Add(dn.Key, destinationButton);
             i++;
         }
+        UpdateButtons();
         prevButton.transform.localPosition = new Vector3(110, _y, 0);
         nextButton.transform.localPosition = new Vector3(160, _y, 0);
-        UpdateButtons();
     }
 
     // Method to update hte positions of the destination buttons, e.g. used in the SortDestinations method
@@ -151,6 +151,7 @@ public class NavigationMenu : MonoBehaviour
         currentPageNr = 0;
         previousPageNr = 0;
         ActivateDestinations(currentPageNr, true);
+     
         Dictionary<int, Node> nodesToShow = new Dictionary<int, Node>();
         Dictionary<int, GameObject> buttonsToReposition = new Dictionary<int, GameObject>();
         if (query == "")
@@ -161,7 +162,7 @@ public class NavigationMenu : MonoBehaviour
         {
             foreach (var dn in destinationNodes)
             {
-                if (dn.Value.Tag != query)
+                if (dn.Value.Type != query)
                 {
                     buttonsInScene[dn.Key].SetActive(false);
                 }
@@ -188,7 +189,6 @@ public class NavigationMenu : MonoBehaviour
         currentPageNr = 0;
         previousPageNr = 0;
         ActivateDestinations(currentPageNr, true);
-        FilterDestinations("");
     }
 
     // Used to activate the needed destination buttons, for the pagination of the destination buttons. 
@@ -259,7 +259,7 @@ public class NavigationMenu : MonoBehaviour
     {
         int x = 55;
         int i = 0;
-        foreach (var tag in differentTags)
+        foreach (var type in differentTypes)
         {
             if(i == 0)
             {
@@ -275,7 +275,7 @@ public class NavigationMenu : MonoBehaviour
                 filterButton.transform.localPosition = new Vector3(x, _y, 0);
                 filterButton.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 filterButton.transform.localScale = new Vector3(1, 1, 1);
-                filterButton.GetComponentInChildren<Text>().text = tag;
+                filterButton.GetComponentInChildren<Text>().text = type;
                 x = 55;
                 _y -= 30;
             }
@@ -285,11 +285,12 @@ public class NavigationMenu : MonoBehaviour
                 filterButton.transform.localPosition = new Vector3(x, _y, 0);
                 filterButton.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 filterButton.transform.localScale = new Vector3(1, 1, 1);
-                filterButton.GetComponentInChildren<Text>().text = tag;
+                filterButton.GetComponentInChildren<Text>().text = type;
                 x += 95;
             }
             i++;
         }
+        _y -= 25;
         _yAfterSortButtons = _y;
     }
 
@@ -300,7 +301,7 @@ public class NavigationMenu : MonoBehaviour
         foreach (var dn in destinationNodes)
         {
             //Change to Name property later
-            if (dn.Value.Tag == nodeName)
+            if (dn.Value.Name == nodeName)
             {
                 nodeId = dn.Key;
                 break;
