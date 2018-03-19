@@ -26,10 +26,15 @@ public class Graph : MonoBehaviour
     public TextAsset NodesFile;
     public TextAsset LinesFile;
 
+    private float xOffset = 0;
+    private float yOffset = 0;
+
     // Use this for initialization
     void Start()
     {
-        InitNodes();
+        FindOffset();
+
+        InitEdges();
 
         InitPointsOfInterest();
 
@@ -118,16 +123,16 @@ public class Graph : MonoBehaviour
         Debug.Log("FEJL");
     }
 
-    void InitNodes()
+    void InitEdges()
     {
         string[] lineSplit = LinesFile.text.Split('\n');
         for (int i = 1; i < lineSplit.Length; i++)
         {
             string[] lineValues = lineSplit[i].Split(',');
-            float nodeStartX = float.Parse(lineValues[1]) / MillimeterToMeter;
-            float nodeStartY = float.Parse(lineValues[2]) / MillimeterToMeter;
-            float nodeEndX = float.Parse(lineValues[3]) / MillimeterToMeter;
-            float nodeEndY = float.Parse(lineValues[4]) / MillimeterToMeter;
+            float nodeStartX = (float.Parse(lineValues[1]) / MillimeterToMeter) - xOffset;
+            float nodeStartY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
+            float nodeEndX = (float.Parse(lineValues[3]) / MillimeterToMeter) - xOffset;
+            float nodeEndY = (float.Parse(lineValues[4]) / MillimeterToMeter) - yOffset;
  
             if (!nodes.Any(x => x.Value.X == nodeStartX && x.Value.Y == nodeStartY))
             {
@@ -151,14 +156,29 @@ public class Graph : MonoBehaviour
         isNodesInitialized = true;
     }
 
+    private void FindOffset()
+    {
+        string[] nodeSplits = NodesFile.text.Split('\n');
+        for(int i = 1; i < nodeSplits.Length; i++)
+        {
+            string[] lineValues = nodeSplits[i].Split(',');
+            string pointType = lineValues[4];
+            if(pointType.Contains("Home"))
+            {
+                xOffset = float.Parse(lineValues[1]) / MillimeterToMeter;
+                yOffset = float.Parse(lineValues[2]) / MillimeterToMeter;
+            }
+        }
+    }
+
     private void InitPointsOfInterest()
     {
         string[] nodeSplit = NodesFile.text.Split('\n');
         for (int i = 1; i < nodeSplit.Length; i++)
         {
             string[] lineValues = nodeSplit[i].Split(',');
-            float pointX = float.Parse(lineValues[1]) / MillimeterToMeter;
-            float pointY = float.Parse(lineValues[2]) / MillimeterToMeter;
+            float pointX = (float.Parse(lineValues[1]) / MillimeterToMeter) - xOffset;
+            float pointY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
             string pointName = lineValues[3];
             string pointType = lineValues[4];
 
@@ -180,10 +200,10 @@ public class Graph : MonoBehaviour
         for (int i = 1; i < lineSplit.Length; i++)
         {
             string[] lineValues = lineSplit[i].Split(',');
-            float nodeStartX = float.Parse(lineValues[1]) / MillimeterToMeter;
-            float nodeStartY = float.Parse(lineValues[2]) / MillimeterToMeter;
-            float nodeEndX = float.Parse(lineValues[3]) / MillimeterToMeter;
-            float nodeEndY = float.Parse(lineValues[4]) / MillimeterToMeter;
+            float nodeStartX = (float.Parse(lineValues[1]) / MillimeterToMeter) - xOffset;
+            float nodeStartY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
+            float nodeEndX = (float.Parse(lineValues[3]) / MillimeterToMeter) - xOffset;
+            float nodeEndY = (float.Parse(lineValues[4]) / MillimeterToMeter) - yOffset;
             float dist = float.Parse(lineValues[5]) / MillimeterToMeter;
 
             foreach (var nodeStart in nodes.Values)

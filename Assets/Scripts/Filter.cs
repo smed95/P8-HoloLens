@@ -31,7 +31,7 @@ public class Filter : MonoBehaviour, IInputClickHandler, IInputHandler
     public void FilterDestinations()
     {
         if (GetComponentInChildren<Text>().text == "Clear filter")
-            navigationMenu.ClearSort();
+            navigationMenu.ClearFilter();
         else
             navigationMenu.FilterDestinations(GetComponentInChildren<Text>().text);
     }

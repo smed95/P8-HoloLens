@@ -57,14 +57,19 @@ public class NavigationMenu : MonoBehaviour
                     differentTypes.Add(dn.Value.Type);
                 }
             }
-            
+
+            float height = CalculateCanvasHeight(destinationNodes.Count, differentTypes.Count + 1);
+
             // Setting the height of the canvas, to adjust to the amount of buttons needed in the UI
             RectTransform rt = navigationMenuCanvas.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(300, CalculateCanvasHeight(destinationNodes.Count, differentTypes.Count + 1));
+            rt.sizeDelta = new Vector2(300, height);
 
             // Setting the height of the panel(called Background), to adjust to the amount of buttons needed in the UI
             RectTransform rectT = GetComponent<RectTransform>();
-            rectT.sizeDelta = new Vector2(300, CalculateCanvasHeight(destinationNodes.Count, differentTypes.Count + 1));
+            rectT.sizeDelta = new Vector2(300, height);
+
+            BoxCollider bc = navigationMenu.GetComponent<BoxCollider>();
+            bc.size = new Vector3(300, height, 0.01f);
 
             SetFilterButtons();
 
@@ -122,7 +127,7 @@ public class NavigationMenu : MonoBehaviour
         nextButton.transform.localPosition = new Vector3(160, _y, 0);
     }
 
-    // Method to update hte positions of the destination buttons, e.g. used in the SortDestinations method
+    // Method to update the positions of the destination buttons, e.g. used in the SortDestinations method
     void UpdateButtonPositions(Dictionary<int, GameObject> destNodes)
     {
         int leftX = 5;
@@ -144,7 +149,7 @@ public class NavigationMenu : MonoBehaviour
         }
     } 
 
-    // This method sorts the destination buttons based on a parsed query, which is the tags found before
+    // This method filters the destination buttons based on a parsed query, which is the tags found before
     public void FilterDestinations(string query)
     {
         ActivateDestinations(currentPageNr, false);
@@ -182,8 +187,8 @@ public class NavigationMenu : MonoBehaviour
         }
     }
 
-    // Used to clear the sorting
-    public void ClearSort()
+    // Used to clear the filtering
+    public void ClearFilter()
     {
         ActivateDestinations(currentPageNr, false);
         currentPageNr = 0;
