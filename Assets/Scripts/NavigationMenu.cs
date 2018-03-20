@@ -70,6 +70,7 @@ public class NavigationMenu : MonoBehaviour
 
             BoxCollider bc = navigationMenu.GetComponent<BoxCollider>();
             bc.size = new Vector3(300, height, 0.01f);
+            bc.center = new Vector3(0, 0, 0.025f);
 
             SetFilterButtons();
 
