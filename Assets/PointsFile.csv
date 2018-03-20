@@ -1,97 +1,97 @@
 ﻿Name,Position X,Position Y,Hyperlink
-Point,10959,27384,2-119, Office
-Point,15759,26388,2-114, Office
-Point,10959,39834,3-103, Office
-Point,15759,37147,3-102, Office
-Point,10959,36150,3-101, Office
-Point,10959,15615,2-113, Office
-Point,10959,13394,2-111, Office
-Point,10959,9329,2-109, Office
-Point,15759,21428,2-112, Office
-Point,10959,19621,2-115, Office
-Point,15759,17242,2-110, Office
-Point,17083,49717,3-108, Printer room
-Point,16258,54517,3-113, Group room
-Point,13359,56307,-1, Exit
-Point,24902,54517,3-117, Group room
-Point,21173,49717,3-110, Group room
-Point,18830,54517,3-115, Group room
-Point,15759,42107,3-104, Office room
-Point,10959,42185,3-105,  Office
-Point,10959,54205,3-111, Group room
-Point,10959,50140,3-109, Office
-Point,10959,47919,3-107,  Office
-Point,13360,7227,-1, Exit
-Point,41929,13817,1-114, Office
-Point,44148,9017,1-121, Office
-Point,45978,13817,1-112, Office
-Point,36887,9017,1-125, Office
-Point,37963,13817,1-116, Office
-Point,40592,9017,1-123, Office
-Point,53570,9017,1-115, Office
-Point,56320,13817,1-108, Cleaning room
-Point,57126,9017,1-113, Office
-Point,46362,9017,1-119, Office
-Point,51221,13817,1-110, Office
-Point,51381,9017,1-117, Office
-Point,21173,13817,2-106, Group room
-Point,24902,9017,2-103, Group room
-Point,26921,13817,2-104, Group room
-Point,17083,13817,2-108, Printer room
-Point,16258,9017,2-107, Office
-Point,18830,9017,2-105, Office
-Point,32538,7965,1-127, Toilet
-Point,33947,6802,-1, Exit
-Point,33947,16169,-1, Exit
-Point,29201,13817,2-102, Group room
-Point,30272,9017,2-101, Group room
-Point,32538,9201,1-129, Toilet
-Point,53487,29367,5-103, Group room
-Point,50015,34167,5-108, Canteen
-Point,49540,29367,5-105, Group room
-Point,54505,35614,5-104, Shower
-Point,56080,33386,5-102, Toilet
-Point,52927,33363,5-106, Handicap toilet
-Point,31359,33390,5-112, Lecture room
-Point,34059,27717,-1, Exit
-Point,31359,30125,5-109, Lecture room
-Point,41092,35167,5-110, Lecture room
-Point,40957,28367,5-107, Library
-Point,34059,35817,-1, Exit
-Point,62959,15505,1-107, Office
-Point,58159,14990,1-106, Laboratory
+Point,10959,27384,2-119,Office
+Point,15759,26388,2-114,Office
+Point,10959,39834,3-103,Office
+Point,15759,37147,3-102,Office
+Point,10959,36150,3-101,Office
+Point,10959,15615,2-113,Office
+Point,10959,13394,2-111,Office
+Point,10959,9329,2-109,Office
+Point,15759,21428,2-112,Office
+Point,10959,19621,2-115,Office
+Point,15759,17242,2-110,Office
+Point,17083,49717,3-108,Printer room
+Point,16258,54517,3-113,Group room
+Point,13359,56307,-1,Exit
+Point,24902,54517,3-117,Group room
+Point,21173,49717,3-110,Group room
+Point,18830,54517,3-115,Group room
+Point,15759,42107,3-104,Office
+Point,10959,42185,3-105,Office
+Point,10959,54205,3-111,Group room
+Point,10959,50140,3-109,Office
+Point,10959,47919,3-107,Office
+Point,13360,7227,-1,Exit
+Point,41929,13817,1-114,Office
+Point,44148,9017,1-121,Office
+Point,45978,13817,1-112,Office
+Point,36887,9017,1-125,Office
+Point,37963,13817,1-116,Office
+Point,40592,9017,1-123,Office
+Point,53570,9017,1-115,Office
+Point,56320,13817,1-108,Cleaning room
+Point,57126,9017,1-113,Office
+Point,46362,9017,1-119,Office
+Point,51221,13817,1-110,Office
+Point,51381,9017,1-117,Office
+Point,21173,13817,2-106,Group room
+Point,24902,9017,2-103,Group room
+Point,26921,13817,2-104,Group room
+Point,17083,13817,2-108,Printer room
+Point,16258,9017,2-107,Office
+Point,18830,9017,2-105,Office
+Point,32538,7965,1-127,Toilet
+Point,33947,6802,-1,Exit
+Point,33947,16169,-1,Exit
+Point,29201,13817,2-102,Group room
+Point,30272,9017,2-101,Group room
+Point,32538,9201,1-129,Toilet
+Point,53487,29367,5-103,Group room
+Point,50015,34167,5-108,Canteen
+Point,49540,29367,5-105,Group room
+Point,54505,35614,5-104,Shower
+Point,56080,33386,5-102,Toilet
+Point,52927,33363,5-106,Handicap toilet
+Point,31359,33390,5-112,Lecture room
+Point,34059,27717,-1,Exit
+Point,31359,30125,5-109,Lecture room
+Point,41092,35167,5-110,Lecture room
+Point,40957,28367,5-107,Library
+Point,34059,35817,-1,Exit
+Point,62959,15505,1-107,Office
+Point,58159,14990,1-106,Laboratory
 Point,58159,21548,1-104,Meeting room
-Point,60559,7219,-1, Exit
-Point,62959,9429,1-111, Office
-Point,62959,11666,1-109, Office
-Point,62959,27011,1-101, Office
-Point,63606,31822,-1, exit
-Point,55843,29367,5-101, Printer room
-Point,62959,21567,1-105, Office
-Point,62959,24843,1-103, Storage
-Point,58159,25725,1-102, Office
-Point,62959,36230,4-123, Office
-Point,40705,49717,4-102, Group room
-Point,39646,54517,4-101, Group room
-Point,33947,56732,-1, Exit
-Point,46362,54517,4-105, Group room
-Point,44343,49717,4-104, Group room
-Point,44148,54517,4-103, , Group room
-Point,30200,54517,3-119, Group room
-Point,29201,49717,3-114, Group room
-Point,26921,49717,3-112, Group room
-Point,32538,55594,3-123, Toilet
-Point,32538,54334,3-121, Toilet
-Point,33938,47366,-1, Exit
-Point,62959,47889,4-117, Home
-Point,60559,56315,-1, Exit
-Point,62959,54143,4-113, Group room
-Point,62959,38419,4-121, Office
-Point,58159,41464,4-110, Meeting room
-Point,62959,42238,4-119, Group room
-Point,53354,49717,4-108, Laboratory
-Point,51356,54517,4-107, Group room
-Point,46928,49717,4-106, Data laboratory
-Point,62959,51918,4-115, Group room
-Point,57126,54517,4-111, Group room
-Point,53570,54517,4-109, Group room
+Point,60559,7219,-1,Exit
+Point,62959,9429,1-111,Office
+Point,62959,11666,1-109,Office
+Point,62959,27011,1-101,Office
+Point,63606,31822,-1,Exit
+Point,55843,29367,5-101,Printer room
+Point,62959,21567,1-105,Office
+Point,62959,24843,1-103,Storage
+Point,58159,25725,1-102,Office
+Point,62959,36230,4-123,Office
+Point,40705,49717,4-102,Group room
+Point,39646,54517,4-101,Group room
+Point,33947,56732,-1,Exit
+Point,46362,54517,4-105,Group room
+Point,44343,49717,4-104,Group room
+Point,44148,54517,4-103,Group room
+Point,30200,54517,3-119,Group room
+Point,29201,49717,3-114,Group room
+Point,26921,49717,3-112,Group room
+Point,32538,55594,3-123,Toilet
+Point,32538,54334,3-121,Toilet
+Point,33938,47366,-1,Exit
+Point,62959,47889,4-117,Home
+Point,60559,56315,-1,Exit
+Point,62959,54143,4-113,Group room
+Point,62959,38419,4-121,Office
+Point,58159,41464,4-110,Meeting room
+Point,62959,42238,4-119,Group room
+Point,53354,49717,4-108,Laboratory
+Point,51356,54517,4-107,Group room
+Point,46928,49717,4-106,Data laboratory
+Point,62959,51918,4-115,Group room
+Point,57126,54517,4-111,Group room
+Point,53570,54517,4-109,Group room
