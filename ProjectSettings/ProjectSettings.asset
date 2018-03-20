@@ -263,6 +263,7 @@ PlayerSettings:
     m_Enabled: 1
     m_Devices:
     - WindowsMR
+    - Vuforia
   m_BuildTargetEnableVuforiaSettings:
   - m_BuildTarget: Metro
     m_Enabled: 1

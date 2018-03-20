@@ -13,20 +13,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vuforia:
     vuforiaLicenseKey: 
-    ufoLicenseKey: QVdsL0lDZi8vLy8vQUFBQUtEeFJwWUo0eVVXc3BTaWJNODQ4blV0UmJqTllsUVFPc0N5YmRGVHdEVm13cExhOThFZmxWUGF4UnlVRm5vQmRyVmtKZ1ErWGF6RlhHbFQ0MkEvRktPcXlkc2tVL2FNWXYvVEdmZytibVZ1cHhROHZTZU9sS1FkN3pCeUNoTXkvMVRFc3NCRDBUMHNWMGszcFdvSTBRTnUrelJlSVJtWUlSWWd2K2I3OVBYeTFCNGRRdFNwaWpVWENPK3R0a1pGMFlaeDNjRHFCMklHTXd6SDZJR1JLNk9CdUNaK2p3bmh6MWxlZytVdzlaUXUwcHVoK2ZQb29uYmVRblR6K2JWZHMzSHQ1dmhEMHhlaTREb1psMng4TzYxbkUvdjU1UEZtNlZnaEJkQTl3a1cyTE1zSDdqZEVtU3JwR2dFWHE1YkNDME9QT2V2OHBDTGVOUWhhbE9kcDBrSWlEREpMR05tNnF0d013cDIzb3BnaDM=
+    ufoLicenseKey: QWIrVG1iLy8vLy8vQUFBQUtHV2toY0RIZGtTa3JxOS9Tb0g3M2lKZjFONnlILzNqbWE5WFRmWDdsaDZ2bWxpYUdBMmJVeTZQRCtBVTE3bnc3ZFcrcXdWb3RpZ2g0VEo0LzJSWHpaSHJuUVFoamdhQzl5dXhYSGUybkVoaER3U252bFcvS1YzU2kwZUJOT3hDd1Bqc05DS2FQWGdyb2srRUJ6dkdteXhLNDBROEJOZVkraGdOODM4WjRWZWFKbXJmTHJPS3cxTmx0ZVcvMWhNcTU1K21heUlNZHJmMTVvWmZPSlptczVzdVJBNGZnVmd2YXdTemdMVjNHcmIreGFnbnJSSnZGM2xLdUhNMVFGV1RZeHNrOVREYm90TjlkNzI5VzVYT3hJRlhFNVExNHlLOWRFV3hUMStuMFNNOW1vWnpscXB2dDBmRnN5WHdJcWwrUnM0MjA4ZVRCUkJITUZpMmFQODNEclNWVUU0MmUyOWdqRDMzWjRjSTkrZ3c=
     delayedInitialization: 0
     cameraDeviceModeSetting: -1
-    maxSimultaneousImageTargets: 1
+    maxSimultaneousImageTargets: 4
     maxSimultaneousObjectTargets: 1
     useDelayedLoadingObjectTargets: 0
     cameraDirection: 0
-    mirrorVideoBackground: 0
+    mirrorVideoBackground: 2
   digitalEyewear:
     cameraOffset: 0.06
     distortionRenderingLayer: 31
-    eyewearType: 0
+    eyewearType: 1
     stereoFramework: 0
-    seeThroughConfiguration: 0
+    seeThroughConfiguration: 1
     viewerName: 
     viewerManufacturer: 
     useCustomViewer: 0
@@ -43,8 +43,10 @@ MonoBehaviour:
       FieldOfView: {x: 0, y: 0, z: 0, w: 0}
       ContainsMagnet: 0
   databaseLoad:
-    dataSetsToLoad: []
-    dataSetsToActivate: []
+    dataSetsToLoad:
+    - VuforiaMars_Images
+    dataSetsToActivate:
+    - VuforiaMars_Images
   videoBackground:
     clippingMode: 0
     numDivisions: 2
