@@ -98,7 +98,14 @@ namespace HoloToolkit.Unity.InputModule
             // Check to make sure the recognized keyword exists in the methods dictionary, then invoke the corresponding method.
             if (enabled && responses.TryGetValue(eventData.RecognizedText.ToLower(), out keywordResponse))
             {
-                keywordResponse.Invoke();
+
+                //Inserted code here to prevent events from being called twice on recognized keyword.
+                //Check only if not used, then invoke and use.
+                if (!eventData.used)
+                {
+                    keywordResponse.Invoke();
+                    eventData.Use();
+                }
             }
         }
     }
