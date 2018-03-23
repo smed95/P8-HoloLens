@@ -19,9 +19,12 @@ public class Graph : MonoBehaviour
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
     public bool isNodesInitialized = false;
 
+    GameObject astronautObject;
+    GameObject droneObject;
 
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
+    public GameObject SpherePrefab;
 
     public TextAsset NodesFile;
     public TextAsset LinesFile;
@@ -45,14 +48,22 @@ public class Graph : MonoBehaviour
 
     public void FirstPointHandler(Vector3 pos)
     {
-        pos.y = 0;
         transform.position = pos;
     }
 
     public void SecondPointHandler(Vector3 pos)
     {
-        pos.y = 0;
-        transform.LookAt(pos);
+        //transform.rotation = Quaternion.identity;
+        var actualDronePos = pos;
+        actualDronePos.y = 0;
+        var astronautPos = astronautObject.transform.position;
+        astronautPos.y = 0;
+        var dronePos = droneObject.transform.position;
+        dronePos.y = 0;
+        Vector3 v1 = dronePos - astronautPos;
+        Vector3 v2 = actualDronePos - astronautPos;
+        float angle = Vector3.Angle(v2, v1);
+        transform.rotation *= Quaternion.FromToRotation(v1, v2);
     }
 
     public void FindShortestPath(/*int startNodeId,*/ int endNodeId)
@@ -151,6 +162,15 @@ public class Graph : MonoBehaviour
                 idCounter++;
             }
         }
+
+        //anchor points
+        astronautObject = Instantiate(SpherePrefab, transform);
+        droneObject = Instantiate(SpherePrefab, transform);
+        float X = (60559f / MillimeterToMeter) - xOffset;
+        float Y = (47889f / MillimeterToMeter) - yOffset;
+        Vector3 dronePoint = new Vector3(X - 0.9f, 1.55f, Y);
+        droneObject.transform.Translate(dronePoint);
+
         isNodesInitialized = true;
     }
 
