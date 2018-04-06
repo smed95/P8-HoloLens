@@ -9,6 +9,11 @@ public class Graph : MonoBehaviour
 
     int idCounter = 0;
     int MillimeterToMeter = 1000;
+    bool isTrackingAnchorPoint = false;
+    Transform currentAnchorPointTransform = null;
+    string currentAnchorPointId = "";
+    float trackStartTime;
+    float trackingTime = 3;
 
     List<Edge> edges = new List<Edge>();
     // Contains ID for a node and the node reference
@@ -46,25 +51,75 @@ public class Graph : MonoBehaviour
         //FindShortestPath(62, 32);
     }
 
+    private void Update()
+    {
+        if (isTrackingAnchorPoint)
+        {
+            if (Time.unscaledTime < trackStartTime + trackingTime)
+                UpdateGraphPositionFromAnchorPoint();
+            else
+            {
+                currentAnchorPointTransform.GetComponent<AudioSource>().Play();
+                isTrackingAnchorPoint = false;
+            }
+        }
+    }
+
     public void FirstPointHandler(Vector3 pos)
     {
-        transform.position = pos;
+        //transform.position = pos;
     }
 
     public void SecondPointHandler(Vector3 pos)
     {
         //transform.rotation = Quaternion.identity;
-        var actualDronePos = pos;
-        actualDronePos.y = 0;
-        var astronautPos = astronautObject.transform.position;
-        astronautPos.y = 0;
-        var dronePos = droneObject.transform.position;
-        dronePos.y = 0;
-        Vector3 v1 = dronePos - astronautPos;
-        Vector3 v2 = actualDronePos - astronautPos;
-        float angle = Vector3.Angle(v2, v1);
-        transform.rotation *= Quaternion.FromToRotation(v1, v2);
+        //var actualDronePos = pos;
+        //actualDronePos.y = 0;
+        //var astronautPos = astronautObject.transform.position;
+        //astronautPos.y = 0;
+        //var dronePos = droneObject.transform.position;
+        //dronePos.y = 0;
+        //Vector3 v1 = dronePos - astronautPos;
+        //Vector3 v2 = actualDronePos - astronautPos;
+        //float angle = Vector3.Angle(v2, v1);
+        //transform.rotation *= Quaternion.FromToRotation(v1, v2);
     }
+
+    public void OnTrackingFound(Transform anchorPoint, string anchorPointId)
+    {
+        trackStartTime = Time.unscaledTime;
+        currentAnchorPointTransform = anchorPoint;
+        currentAnchorPointId = anchorPointId;
+        isTrackingAnchorPoint = true;
+    }
+
+    public void OnTrackingLost()
+    {
+        currentAnchorPointTransform = null;
+        currentAnchorPointId = "";
+        isTrackingAnchorPoint = false;
+    }
+
+    void UpdateGraphPositionFromAnchorPoint()
+    {
+        switch (currentAnchorPointId)
+        {
+            case "drone":
+                var dronePos = droneObject.transform.position;
+                Vector3 v1 = transform.right;
+                v1.y = 0;
+                Vector3 v2 = currentAnchorPointTransform.up;
+                v2.y = 0;
+                transform.rotation *= Quaternion.FromToRotation(v1, v2);
+                dronePos = droneObject.transform.position;
+                var offset = currentAnchorPointTransform.position - dronePos;
+                transform.position = transform.position + offset;
+                break;
+            default:
+                break;
+        }
+    }
+
 
     public void FindShortestPath(/*int startNodeId,*/ int endNodeId)
     {
