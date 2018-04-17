@@ -17,6 +17,7 @@ public class Graph : MonoBehaviour
     Dictionary<int, GameObject> initializedNodes = new Dictionary<int, GameObject>();
     // Dictionary with the id of the node and the name of the node
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
+    public Dictionary<int, Vector2> VuMarkLocations = new Dictionary<int, Vector2>();
     public bool isNodesInitialized = false;
 
     GameObject astronautObject;
@@ -28,6 +29,7 @@ public class Graph : MonoBehaviour
 
     public TextAsset NodesFile;
     public TextAsset LinesFile;
+    public TextAsset VuMarksFile;
 
     private float xOffset = 0;
     private float yOffset = 0;
@@ -42,6 +44,8 @@ public class Graph : MonoBehaviour
         InitPointsOfInterest();
 
         InitNeighbours();
+
+        InitVuMarks();
 
         //FindShortestPath(62, 32);
     }
@@ -246,6 +250,21 @@ public class Graph : MonoBehaviour
             }
         }
     }
+
+    private void InitVuMarks()
+    {
+        string[] vuMarkSplit = VuMarksFile.text.Split('\n');
+        for (int i = 1; i < vuMarkSplit.Length; i++)
+        {
+            string[] vuMarkValues = vuMarkSplit[i].Split(',');
+            float nodeX = (float.Parse(vuMarkValues[1]) / MillimeterToMeter) - xOffset;
+            float nodeY = (float.Parse(vuMarkValues[2]) / MillimeterToMeter) - yOffset;
+            int vuMarkId = int.Parse(vuMarkValues[4]);
+
+            VuMarkLocations.Add(vuMarkId,new Vector2(nodeX, nodeY));
+        }
+    }
+
     //void InitNodes()
     //{
     //    string[] nodeLines = NodesFile.text.Split('\n');
