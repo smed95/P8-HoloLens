@@ -51,7 +51,7 @@ public class DroneTrackableEventHandler : MonoBehaviour, ITrackableEventHandler
         {
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
             //WorldAnchorManager.Instance.AttachAnchor(gameObject, "drone");
-            graph.OnTrackingFound(transform, "drone");
+            //graph.OnTrackingFound(transform, "drone");
            
             OnTrackingFound();
         }
@@ -60,7 +60,7 @@ public class DroneTrackableEventHandler : MonoBehaviour, ITrackableEventHandler
         {
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
             OnTrackingLost();
-            graph.OnTrackingLost();
+            //graph.OnTrackingLost();
         }
         else
         {

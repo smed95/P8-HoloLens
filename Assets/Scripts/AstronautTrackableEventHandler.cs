@@ -49,7 +49,7 @@ public class AstronautTrackableEventHandler : MonoBehaviour, ITrackableEventHand
             newStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
         {
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
-            graph.FirstPointHandler(transform.position);
+            //graph.OnTrackingFound(transform, "drone");
             OnTrackingFound();
         }
         else if (previousStatus == TrackableBehaviour.Status.TRACKED &&

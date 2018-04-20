@@ -1,19 +1,17 @@
-﻿using System;
+﻿using HoloToolkit.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.XR.WSA;
+using UnityEngine.XR.WSA.Persistence;
 
 public class Graph : MonoBehaviour
 {
 
     int idCounter = 0;
     int MillimeterToMeter = 1000;
-    bool isTrackingAnchorPoint = false;
-    Transform currentAnchorPointTransform = null;
-    string currentAnchorPointId = "";
-    float trackStartTime;
-    float trackingTime = 3;
 
     List<Edge> edges = new List<Edge>();
     // Contains ID for a node and the node reference
@@ -23,9 +21,9 @@ public class Graph : MonoBehaviour
     // Dictionary with the id of the node and the name of the node
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
     public bool isNodesInitialized = false;
-
-    GameObject astronautObject;
-    GameObject droneObject;
+    
+    GameObject object1;
+    GameObject object2;
 
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
@@ -48,78 +46,10 @@ public class Graph : MonoBehaviour
 
         InitNeighbours();
 
+        InitAnchorPoints();
+
         //FindShortestPath(62, 32);
     }
-
-    private void Update()
-    {
-        if (isTrackingAnchorPoint)
-        {
-            if (Time.unscaledTime < trackStartTime + trackingTime)
-                UpdateGraphPositionFromAnchorPoint();
-            else
-            {
-                currentAnchorPointTransform.GetComponent<AudioSource>().Play();
-                isTrackingAnchorPoint = false;
-            }
-        }
-    }
-
-    public void FirstPointHandler(Vector3 pos)
-    {
-        //transform.position = pos;
-    }
-
-    public void SecondPointHandler(Vector3 pos)
-    {
-        //transform.rotation = Quaternion.identity;
-        //var actualDronePos = pos;
-        //actualDronePos.y = 0;
-        //var astronautPos = astronautObject.transform.position;
-        //astronautPos.y = 0;
-        //var dronePos = droneObject.transform.position;
-        //dronePos.y = 0;
-        //Vector3 v1 = dronePos - astronautPos;
-        //Vector3 v2 = actualDronePos - astronautPos;
-        //float angle = Vector3.Angle(v2, v1);
-        //transform.rotation *= Quaternion.FromToRotation(v1, v2);
-    }
-
-    public void OnTrackingFound(Transform anchorPoint, string anchorPointId)
-    {
-        trackStartTime = Time.unscaledTime;
-        currentAnchorPointTransform = anchorPoint;
-        currentAnchorPointId = anchorPointId;
-        isTrackingAnchorPoint = true;
-    }
-
-    public void OnTrackingLost()
-    {
-        currentAnchorPointTransform = null;
-        currentAnchorPointId = "";
-        isTrackingAnchorPoint = false;
-    }
-
-    void UpdateGraphPositionFromAnchorPoint()
-    {
-        switch (currentAnchorPointId)
-        {
-            case "drone":
-                var dronePos = droneObject.transform.position;
-                Vector3 v1 = transform.right;
-                v1.y = 0;
-                Vector3 v2 = currentAnchorPointTransform.up;
-                v2.y = 0;
-                transform.rotation *= Quaternion.FromToRotation(v1, v2);
-                dronePos = droneObject.transform.position;
-                var offset = currentAnchorPointTransform.position - dronePos;
-                transform.position = transform.position + offset;
-                break;
-            default:
-                break;
-        }
-    }
-
 
     public void FindShortestPath(/*int startNodeId,*/ int endNodeId)
     {
@@ -187,6 +117,23 @@ public class Graph : MonoBehaviour
         Debug.Log("FEJL");
     }
 
+    void InitAnchorPoints()
+    {
+        Dictionary<int, Vector2> points = new Dictionary<int, Vector2>();
+        Vector3 dronepos = object2.transform.position;
+        points.Add(2, new Vector2(dronepos.x, dronepos.z));
+        Vector3 astronautpos = object1.transform.position;
+        points.Add(1, new Vector2(astronautpos.x, astronautpos.z));
+        AnchorPointsManager.InitModelPoints(points);
+    }
+
+    public void AdjustGraph(RTTransform rtt)
+    {
+        transform.SetPositionAndRotation(new Vector3(rtt.x0, transform.position.y, rtt.y0), Quaternion.Euler(0, -rtt.rotation, 0));
+        Debug.Log(object1.transform.position);
+        Debug.Log(object2.transform.position);
+    }
+
     void InitEdges()
     {
         string[] lineSplit = LinesFile.text.Split('\n');
@@ -219,12 +166,12 @@ public class Graph : MonoBehaviour
         }
 
         //anchor points
-        astronautObject = Instantiate(SpherePrefab, transform);
-        droneObject = Instantiate(SpherePrefab, transform);
+        object1 = Instantiate(SpherePrefab, transform);
+        object2 = Instantiate(SpherePrefab, transform);
         float X = (60559f / MillimeterToMeter) - xOffset;
         float Y = (47889f / MillimeterToMeter) - yOffset;
         Vector3 dronePoint = new Vector3(X - 0.9f, 1.55f, Y);
-        droneObject.transform.Translate(dronePoint);
+        object2.transform.Translate(dronePoint);
 
         isNodesInitialized = true;
     }
