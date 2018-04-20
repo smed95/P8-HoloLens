@@ -6,6 +6,7 @@ All Rights Reserved.
 Confidential and Proprietary - Protected under copyright and other laws.
 ==============================================================================*/
 
+using HoloToolkit.Unity;
 using UnityEngine;
 using Vuforia;
 
@@ -49,7 +50,9 @@ public class DroneTrackableEventHandler : MonoBehaviour, ITrackableEventHandler
             newStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
         {
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
-            graph.SecondPointHandler(transform.position);
+            //WorldAnchorManager.Instance.AttachAnchor(gameObject, "drone");
+            //graph.OnTrackingFound(transform, "drone");
+           
             OnTrackingFound();
         }
         else if (previousStatus == TrackableBehaviour.Status.TRACKED &&
@@ -57,6 +60,7 @@ public class DroneTrackableEventHandler : MonoBehaviour, ITrackableEventHandler
         {
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
             OnTrackingLost();
+            //graph.OnTrackingLost();
         }
         else
         {

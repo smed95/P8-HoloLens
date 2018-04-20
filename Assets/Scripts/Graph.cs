@@ -1,8 +1,11 @@
-﻿using System;
+﻿using HoloToolkit.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.XR.WSA;
+using UnityEngine.XR.WSA.Persistence;
 
 public class Graph : MonoBehaviour
 {
@@ -19,9 +22,9 @@ public class Graph : MonoBehaviour
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
     public Dictionary<int, Vector2> VuMarkLocations = new Dictionary<int, Vector2>();
     public bool isNodesInitialized = false;
-
-    GameObject astronautObject;
-    GameObject droneObject;
+    
+    GameObject object1;
+    GameObject object2;
 
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
@@ -48,26 +51,6 @@ public class Graph : MonoBehaviour
         InitVuMarks();
 
         //FindShortestPath(62, 32);
-    }
-
-    public void FirstPointHandler(Vector3 pos)
-    {
-        transform.position = pos;
-    }
-
-    public void SecondPointHandler(Vector3 pos)
-    {
-        //transform.rotation = Quaternion.identity;
-        var actualDronePos = pos;
-        actualDronePos.y = 0;
-        var astronautPos = astronautObject.transform.position;
-        astronautPos.y = 0;
-        var dronePos = droneObject.transform.position;
-        dronePos.y = 0;
-        Vector3 v1 = dronePos - astronautPos;
-        Vector3 v2 = actualDronePos - astronautPos;
-        float angle = Vector3.Angle(v2, v1);
-        transform.rotation *= Quaternion.FromToRotation(v1, v2);
     }
 
     public void FindShortestPath(/*int startNodeId,*/ int endNodeId)
@@ -136,6 +119,23 @@ public class Graph : MonoBehaviour
         Debug.Log("FEJL");
     }
 
+    void InitAnchorPoints()
+    {
+        Dictionary<int, Vector2> points = new Dictionary<int, Vector2>();
+        Vector3 dronepos = object2.transform.position;
+        points.Add(2, new Vector2(dronepos.x, dronepos.z));
+        Vector3 astronautpos = object1.transform.position;
+        points.Add(1, new Vector2(astronautpos.x, astronautpos.z));
+        AnchorPointsManager.InitModelPoints(points);
+    }
+
+    public void AdjustGraph(RTTransform rtt)
+    {
+        transform.SetPositionAndRotation(new Vector3(rtt.x0, transform.position.y, rtt.y0), Quaternion.Euler(0, -rtt.rotation, 0));
+        Debug.Log(object1.transform.position);
+        Debug.Log(object2.transform.position);
+    }
+
     void InitEdges()
     {
         string[] lineSplit = LinesFile.text.Split('\n');
@@ -168,12 +168,12 @@ public class Graph : MonoBehaviour
         }
 
         //anchor points
-        astronautObject = Instantiate(SpherePrefab, transform);
-        droneObject = Instantiate(SpherePrefab, transform);
+        object1 = Instantiate(SpherePrefab, transform);
+        object2 = Instantiate(SpherePrefab, transform);
         float X = (60559f / MillimeterToMeter) - xOffset;
         float Y = (47889f / MillimeterToMeter) - yOffset;
         Vector3 dronePoint = new Vector3(X - 0.9f, 1.55f, Y);
-        droneObject.transform.Translate(dronePoint);
+        object2.transform.Translate(dronePoint);
 
         isNodesInitialized = true;
     }
