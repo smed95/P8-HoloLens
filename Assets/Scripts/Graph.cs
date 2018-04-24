@@ -9,7 +9,7 @@ using UnityEngine.XR.WSA.Persistence;
 
 public class Graph : MonoBehaviour
 {
-
+    // Used for assigning Nodes with unique IDs
     int idCounter = 0;
     int MillimeterToMeter = 1000;
 
@@ -26,14 +26,17 @@ public class Graph : MonoBehaviour
     GameObject object1;
     GameObject object2;
 
+    // Unity bonds to the prefab instances used for instansiation
     public GameObject NodePrefab;
     public GameObject EdgePrefab;
     public GameObject SpherePrefab;
 
+    // The data files used to create the navigation graph
     public TextAsset NodesFile;
     public TextAsset LinesFile;
     public TextAsset VuMarksFile;
 
+    // Set when the offset in the data files has been found
     private float xOffset = 0;
     private float yOffset = 0;
 
@@ -182,10 +185,14 @@ public class Graph : MonoBehaviour
         isNodesInitialized = true;
     }
 
+    // This method searches for the two home points and calculate the offset from origo
     private void FindOffset()
     {
+        // The nodes data is stored in CSV format
         string[] nodeSplits = NodesFile.text.Split('\n');
-        for(int i = 1; i < nodeSplits.Length; i++)
+
+        // The first line is the labels
+        for (int i = 1; i < nodeSplits.Length; i++)
         {
             string[] lineValues = nodeSplits[i].Split(',');
             string pointType = lineValues[4];
@@ -197,17 +204,24 @@ public class Graph : MonoBehaviour
         }
     }
 
+    // This method instansiates the nodes with labeled information
     private void InitPointsOfInterest()
     {
+        // The first line is labels
         string[] nodeSplit = NodesFile.text.Split('\n');
         for (int i = 1; i < nodeSplit.Length; i++)
         {
+            // The offset is subtracted from the points
             string[] lineValues = nodeSplit[i].Split(',');
             float pointX = (float.Parse(lineValues[1]) / MillimeterToMeter) - xOffset;
             float pointY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
             string pointName = lineValues[3];
             string pointType = lineValues[4];
 
+            /* If a point exsist on the coordinates of the POI then it is reachable.
+             * The additional label info is then added to the point and added to the list of
+             * destination nodes.
+            */
             foreach (var node in nodes.Values)
             {
                 if (pointX == node.X && pointY == node.Y)
@@ -220,11 +234,16 @@ public class Graph : MonoBehaviour
         }
     }
 
+    /* This method creates the edges between nodes if there exsists two nodes 
+     * according to the lines file.
+    */ 
     private void InitNeighbours()
     {
+        // The first line is labels
         string[] lineSplit = LinesFile.text.Split('\n');
         for (int i = 1; i < lineSplit.Length; i++)
         {
+            // Each line contains two set of coordinates corresponding to each end point
             string[] lineValues = lineSplit[i].Split(',');
             float nodeStartX = (float.Parse(lineValues[1]) / MillimeterToMeter) - xOffset;
             float nodeStartY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
@@ -232,6 +251,9 @@ public class Graph : MonoBehaviour
             float nodeEndY = (float.Parse(lineValues[4]) / MillimeterToMeter) - yOffset;
             float dist = float.Parse(lineValues[5]) / MillimeterToMeter;
 
+            /* The nodes list is searched for each of the two points
+             * If they both exsists then an edge is instansiated and added to the neighbor list
+             */
             foreach (var nodeStart in nodes.Values)
             {
                 if (nodeStart.X == nodeStartX && nodeStart.Y == nodeStartY)
@@ -255,8 +277,10 @@ public class Graph : MonoBehaviour
         }
     }
 
+    // This method adds VuMark locations to the list of VuMarks
     private void InitVuMarks()
     {
+        // The first line contain labels
         string[] vuMarkSplit = VuMarksFile.text.Split('\n');
         for (int i = 1; i < vuMarkSplit.Length; i++)
         {
