@@ -48,8 +48,15 @@ public class Graph : MonoBehaviour
 
         InitNeighbours();
 
+        InitAnchorPoints();
         InitVuMarks();
-
+        //Vector2 point1 = new Vector2(-2.5f, 1.2f);
+        //Vector2 point2 = new Vector2(0.7f, 0.4f);
+        //AnchorPointsManager.AddActualPoint(4, point1);
+        //AnchorPointsManager.AddActualPoint(5, point2);
+        ////transform.SetPositionAndRotation(new Vector3(-2.5f, 0, 1.2f), Quaternion.Euler(0, -165.5f, 0));
+        //Debug.Log(object1.transform.position);
+        //Debug.Log(object2.transform.position);
         //FindShortestPath(62, 32);
     }
 
@@ -121,19 +128,16 @@ public class Graph : MonoBehaviour
 
     void InitAnchorPoints()
     {
-        Dictionary<int, Vector2> points = new Dictionary<int, Vector2>();
-        Vector3 dronepos = object2.transform.position;
-        points.Add(2, new Vector2(dronepos.x, dronepos.z));
+        
         Vector3 astronautpos = object1.transform.position;
-        points.Add(1, new Vector2(astronautpos.x, astronautpos.z));
-        AnchorPointsManager.InitModelPoints(points);
+        VuMarkLocations.Add(4, new Vector2(astronautpos.x, astronautpos.z));
+        Vector3 dronepos = object2.transform.position;
+        VuMarkLocations.Add(5, new Vector2(dronepos.x, dronepos.z));
     }
 
     public void AdjustGraph(RTTransform rtt)
     {
         transform.SetPositionAndRotation(new Vector3(rtt.x0, transform.position.y, rtt.y0), Quaternion.Euler(0, -rtt.rotation, 0));
-        Debug.Log(object1.transform.position);
-        Debug.Log(object2.transform.position);
     }
 
     void InitEdges()
@@ -263,6 +267,7 @@ public class Graph : MonoBehaviour
 
             VuMarkLocations.Add(vuMarkId,new Vector2(nodeX, nodeY));
         }
+        AnchorPointsManager.InitModelPoints(VuMarkLocations);
     }
 
     //void InitNodes()

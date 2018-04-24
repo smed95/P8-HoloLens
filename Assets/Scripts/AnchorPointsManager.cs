@@ -101,7 +101,7 @@ public class AnchorPointsManager : Singleton<AnchorPointsManager> {
         Vector c = CholeskyUpper.BackwardSubstitution(z);
         var sin = c[0];
         var cos = c[1];
-        var angle = Mathf.Atan(sin / cos);
+        var angle = Mathf.Atan2(sin, cos);
         var res = new RTTransform();
         res.rotation = Mathf.Rad2Deg * angle;
         res.x0 = c[2];
