@@ -33,6 +33,8 @@ public class Filter : MonoBehaviour, IInputClickHandler, IInputHandler
         if (GetComponentInChildren<Text>().text == "Clear filter")
             navigationMenu.ClearFilter();
         else
+        {
             navigationMenu.FilterDestinations(GetComponentInChildren<Text>().text);
+        }
     }
 }
