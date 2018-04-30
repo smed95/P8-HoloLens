@@ -59,19 +59,19 @@ public class NavigationMenu : MonoBehaviour
             // Sort the list alphabetically
             differentTypes.Sort();
 
-            float height = CalculateCanvasHeight(destinationNodes.Count, differentTypes.Count + 1);
-
-            // Setting the height of the canvas, to adjust to the amount of buttons needed in the UI
-            RectTransform rt = navigationMenuCanvas.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(300, height);
-
-            // Setting the height of the panel(called Background), to adjust to the amount of buttons needed in the UI
-            RectTransform rectT = GetComponent<RectTransform>();
-            rectT.sizeDelta = new Vector2(300, height);
-
-            BoxCollider bc = navigationMenu.GetComponent<BoxCollider>();
-            bc.size = new Vector3(300, height, 0.01f);
-            bc.center = new Vector3(0, 0, 0.025f);
+            //float height = CalculateCanvasHeight(destinationNodes.Count, differentTypes.Count + 1);
+            //
+            //// Setting the height of the canvas, to adjust to the amount of buttons needed in the UI
+            //RectTransform rt = navigationMenuCanvas.GetComponent<RectTransform>();
+            //rt.sizeDelta = new Vector2(300, height);
+            //
+            //// Setting the height of the panel(called Background), to adjust to the amount of buttons needed in the UI
+            //RectTransform rectT = GetComponent<RectTransform>();
+            //rectT.sizeDelta = new Vector2(300, height);
+            //
+            //BoxCollider bc = navigationMenu.GetComponent<BoxCollider>();
+            //bc.size = new Vector3(300, height, 0.01f);
+            //bc.center = new Vector3(0, 0, 0.025f);
 
             SetFilterButtons();
 
@@ -82,17 +82,17 @@ public class NavigationMenu : MonoBehaviour
     }
 
     // Method used to calculate the needed height for the canvas and the panel, set in the update method
-    float CalculateCanvasHeight(int nodeCount, int tagCount)
-    {
-        float nodesHeight = 0;
-        if(nodeCount < 9)
-            nodesHeight = (Mathf.Ceil(nodeCount / 2) * 35);
-        else
-            nodesHeight = 175;
-        // Added 85 to get the right y placement, for the first buttons.
-        float filterHeight = (Mathf.Ceil(tagCount / 3) * 30) + 85 + 25;
-        return nodesHeight + filterHeight;
-    }
+    //float CalculateCanvasHeight(int nodeCount, int tagCount)
+    //{
+    //    float nodesHeight = 0;
+    //    if(nodeCount < 9)
+    //        nodesHeight = (Mathf.Ceil(nodeCount / 2) * 35);
+    //    else
+    //        nodesHeight = 175;
+    //    // Added 85 to get the right y placement, for the first buttons.
+    //    float filterHeight = (Mathf.Ceil(tagCount / 3) * 30) + 85 + 25;
+    //    return nodesHeight + filterHeight;
+    //}
 
     // Method to set the positions of the destination buttons.
     //void SetButtonPositions(Dictionary<int, Node> destNodes)
