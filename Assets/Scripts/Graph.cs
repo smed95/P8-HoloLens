@@ -124,6 +124,8 @@ public class Graph : MonoBehaviour
 
     void InitEdges()
     {
+        // This method could be improved by having a class containing a set of coordinates
+        // and a hash value used to collect each coordinate instead of searching each time
         string[] lineSplit = LinesFile.text.Split('\n');
         for (int i = 1; i < lineSplit.Length; i++)
         {
@@ -133,28 +135,27 @@ public class Graph : MonoBehaviour
             float nodeEndX = (float.Parse(lineValues[3]) / MillimeterToMeter) - xOffset;
             float nodeEndY = (float.Parse(lineValues[4]) / MillimeterToMeter) - yOffset;
  
-            if (!nodes.Any(x => x.Value.X == nodeStartX && x.Value.Y == nodeStartY))
-            {
-                GameObject nodeObject1 = Instantiate(NodePrefab, transform);
-                Node node1 = nodeObject1.GetComponent<Node>();
-                node1.Instantiate(nodeStartX, nodeStartY, idCounter);
-                nodes.Add(node1.Id, node1);
-                initializedNodes.Add(node1.Id, node1.gameObject);
-                idCounter++;
-            }
-            if (!nodes.Any(x => x.Value.X == nodeEndX && x.Value.Y == nodeEndY))
-            {
-                GameObject nodeObject2 = Instantiate(NodePrefab, transform);
-                Node node2 = nodeObject2.GetComponent<Node>();
-                node2.Instantiate(nodeEndX, nodeEndY, idCounter);
-                nodes.Add(node2.Id, node2);
-                initializedNodes.Add(node2.Id, node2.gameObject);
-                idCounter++;
-            }
+            // This should be made into a method since it is just repeated 
+            CheckAndInstantiateNode(nodeStartX, nodeStartY);
+
+            CheckAndInstantiateNode(nodeEndX, nodeEndY);
         }
         
 
         isNodesInitialized = true;
+    }
+
+    private void CheckAndInstantiateNode(float xCoordinate, float yCoordinate)
+    {
+        if (!nodes.Any(node => node.Value.X == xCoordinate && node.Value.Y == yCoordinate))
+        {
+            GameObject nodeObject = Instantiate(NodePrefab, transform);
+            Node node = nodeObject.GetComponent<Node>();
+            node.Instantiate(xCoordinate, yCoordinate, idCounter);
+            nodes.Add(node.Id, node);
+            initializedNodes.Add(node.Id, node.gameObject);
+            idCounter++;
+        }
     }
 
     // This method searches for the two home points and calculate the offset from origo
