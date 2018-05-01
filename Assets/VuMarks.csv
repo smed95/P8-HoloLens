@@ -1,4 +1,9 @@
 ﻿Name,Position X,Position Y,Hyperlink
-Point,27508,53017,Vumark, 2
-Point,49679,51217,Vumark, 1
-Point,12459,46218,Vurmark, 3
+Point,27508,53017,Vumark, 2,180
+Point,41897,53017,VuMark,7,180
+Point,12459,46218,Vurmark,3,90
+Point,19128,51217,VuMark,8,0
+Point,59159,50717,VuMark,6,45
+Point,12459,51217,VuMark,9,90
+Point,49679,51217,Vumark,1,0
+Point,59659,47889,VuMark,5,90

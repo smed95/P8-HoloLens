@@ -20,7 +20,7 @@ public class Graph : MonoBehaviour
     Dictionary<int, GameObject> initializedNodes = new Dictionary<int, GameObject>();
     // Dictionary with the id of the node and the name of the node
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
-    public Dictionary<int, Vector2> VuMarkLocations = new Dictionary<int, Vector2>();
+    public Dictionary<int, RTTransform> VuMarkLocations = new Dictionary<int, RTTransform>();
     public bool isNodesInitialized = false;
     
     GameObject object1;
@@ -51,7 +51,7 @@ public class Graph : MonoBehaviour
 
         InitNeighbours();
 
-        InitAnchorPoints();
+        
         InitVuMarks();
         //Vector2 point1 = new Vector2(-2.5f, 1.2f);
         //Vector2 point2 = new Vector2(0.7f, 0.4f);
@@ -127,15 +127,6 @@ public class Graph : MonoBehaviour
         }
 
         Debug.Log("FEJL");
-    }
-
-    void InitAnchorPoints()
-    {
-        
-        Vector3 astronautpos = object1.transform.position;
-        VuMarkLocations.Add(4, new Vector2(astronautpos.x, astronautpos.z));
-        Vector3 dronepos = object2.transform.position;
-        VuMarkLocations.Add(5, new Vector2(dronepos.x, dronepos.z));
     }
 
     public void AdjustGraph(RTTransform rtt)
@@ -287,9 +278,10 @@ public class Graph : MonoBehaviour
             string[] vuMarkValues = vuMarkSplit[i].Split(',');
             float nodeX = (float.Parse(vuMarkValues[1]) / MillimeterToMeter) - xOffset;
             float nodeY = (float.Parse(vuMarkValues[2]) / MillimeterToMeter) - yOffset;
+            float angle = float.Parse(vuMarkValues[5]);
             int vuMarkId = int.Parse(vuMarkValues[4]);
 
-            VuMarkLocations.Add(vuMarkId,new Vector2(nodeX, nodeY));
+            VuMarkLocations.Add(vuMarkId,new RTTransform { x0 = nodeX, y0 = nodeY, rotation = angle});
         }
         AnchorPointsManager.InitModelPoints(VuMarkLocations);
     }
