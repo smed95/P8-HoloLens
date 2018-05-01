@@ -22,9 +22,6 @@ public class Graph : MonoBehaviour
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
     public Dictionary<int, RTTransform> VuMarkLocations = new Dictionary<int, RTTransform>();
     public bool isNodesInitialized = false;
-    
-    GameObject object1;
-    GameObject object2;
 
     // Unity bonds to the prefab instances used for instansiation
     public GameObject NodePrefab;
@@ -50,17 +47,8 @@ public class Graph : MonoBehaviour
         InitPointsOfInterest();
 
         InitNeighbours();
-
         
         InitVuMarks();
-        //Vector2 point1 = new Vector2(-2.5f, 1.2f);
-        //Vector2 point2 = new Vector2(0.7f, 0.4f);
-        //AnchorPointsManager.AddActualPoint(4, point1);
-        //AnchorPointsManager.AddActualPoint(5, point2);
-        ////transform.SetPositionAndRotation(new Vector3(-2.5f, 0, 1.2f), Quaternion.Euler(0, -165.5f, 0));
-        //Debug.Log(object1.transform.position);
-        //Debug.Log(object2.transform.position);
-        //FindShortestPath(62, 32);
     }
 
     public void FindShortestPath(/*int startNodeId,*/ int endNodeId)
@@ -99,7 +87,7 @@ public class Graph : MonoBehaviour
                 {
                     nodes[currentId].gameObject.SetActive(true);
                     int cameFromId = cameFrom[currentId];
-                    edges.Find(e => e.isMatch(currentId, cameFromId)).gameObject.SetActive(true);
+                    edges.Find(e => e.IsMatch(currentId, cameFromId)).gameObject.SetActive(true);
                     currentId = cameFromId;
                 }
                 nodes[currentId].gameObject.SetActive(true);
@@ -164,14 +152,7 @@ public class Graph : MonoBehaviour
                 idCounter++;
             }
         }
-
-        //anchor points
-        object1 = Instantiate(SpherePrefab, transform);
-        object2 = Instantiate(SpherePrefab, transform);
-        float X = (60559f / MillimeterToMeter) - xOffset;
-        float Y = (47889f / MillimeterToMeter) - yOffset;
-        Vector3 dronePoint = new Vector3(X - 0.9f, 1.55f, Y);
-        object2.transform.Translate(dronePoint);
+        
 
         isNodesInitialized = true;
     }
@@ -285,46 +266,6 @@ public class Graph : MonoBehaviour
         }
         AnchorPointsManager.InitModelPoints(VuMarkLocations);
     }
-
-    //void InitNodes()
-    //{
-    //    string[] nodeLines = NodesFile.text.Split('\n');
-    //    for (int i = 1; i < nodeLines.Length; i++)
-    //    {
-    //        if (nodeLines[i].Length < 5)
-    //            continue;
-    //        string[] lineValues = nodeLines[i].Split(';');
-    //        int id = int.Parse(lineValues[0]);
-    //        string tag = lineValues[1];
-    //        float x = float.Parse(lineValues[2]) / MillimeterToMeter;
-    //        float y = float.Parse(lineValues[3]) / MillimeterToMeter;
-    //        GameObject nodeObject = Instantiate(NodePrefab, transform);
-    //        Node node = nodeObject.GetComponent<Node>();
-    //        node.Instantiate(x, y, id, tag);
-    //        nodes.Add(node.Id, node);
-    //    }
-    //}
-
-//    void InitEdges()
-//    {
-//        string[] edgeLines = EdgesFile.text.Split('\n');
-//        for (int i = 1; i < edgeLines.Length; i++)
-//        {
-//            if (edgeLines[i].Length < 5)
-//                continue;
-
-//            int idFrom = int.Parse(edgeLines[i].Split(';')[1]);
-//            Node nodeFrom = nodes[idFrom];
-//            int idTo = int.Parse(edgeLines[i].Split(';')[2]);
-//            Node nodeTo = nodes[idTo];
-//            GameObject edgeObject1 = Instantiate(EdgePrefab, transform);
-//            Edge edge = edgeObject1.GetComponent<Edge>();
-//            edge.Instantiate(nodeFrom, nodeTo, 0);
-//            nodeFrom.NeighborIds.Add(nodeTo.Id);
-//            nodeTo.NeighborIds.Add(nodeFrom.Id);
-//            edges.Add(edge);
-//        }
-//    }
 
     private int FindClosestNode()
     {

@@ -3,177 +3,67 @@ using System.Collections.Generic;
 using UnityEngine;
 using HoloToolkit.Unity;
 
-public class AnchorPointsManager : Singleton<AnchorPointsManager> {
+public class AnchorPointsManager : Singleton<AnchorPointsManager>
+{
 
+    //reference to the graph
     public Graph graph;
 
+    //Dictionary with the local positions and rotations of the vumarks in the graph
     static Dictionary<int, RTTransform> modelPoints = new Dictionary<int, RTTransform>();
-    static Vector3 CenterPoint;
-    static Vector3 DirectionPoint;
-    //static Dictionary<int, Vector2> actualPoints = new Dictionary<int, Vector2>();
-    //static Dictionary<int, int> RowIdexes = new Dictionary<int, int>();
-    //static Matrix A;
-    //static Vector b;
-
-    protected override void Awake()
-    {
-        base.Awake();
-    }
 
     public static void InitModelPoints(Dictionary<int, RTTransform> points)
     {
         modelPoints = points;
     }
 
+    //function called when a vumark is detected
     public static void AddActualPoint(int id, Transform vumarkTransform)
     {
+        //if the vumark id is in the graph model
         if (modelPoints.ContainsKey(id))
         {
-            
+            //**rotation part**
+            //angle of the normalvector of the vumark in the local X/Z plane of the graph
             var modelAngle = modelPoints[id].rotation;
+            //the global vector along the local x axis of the graph
             var graphForward = Instance.graph.transform.forward;
+            //keep the vector in the X/Z plane
             graphForward.y = 0;
+            //rotate the global forward vector to the angle of the model to get the normalvector of the vumark in global space 
             var modelNormalVector = Quaternion.Euler(0, modelAngle, 0) * graphForward;
+            //the normalvector of the detected vumark
             var vumarkNormalVector = vumarkTransform.up;
+            //keep the vector in the X/Z plane
             vumarkNormalVector.y = 0;
+            //rotate the graph such that the angle of the model vumark and detected vumark's normalvectors match
             Instance.graph.transform.rotation *= Quaternion.FromToRotation(modelNormalVector, vumarkNormalVector);
 
+            //**position part**
+            //position of detected vumark
             var vumarkPosition = vumarkTransform.position;
+            //ignore y direction (up/down)
             vumarkPosition.y = 0;
+            //calculate global position of model vumark using the graph's transform
             var modelPoint3d = Instance.graph.transform.TransformPoint(new Vector3(modelPoints[id].x0, 0, modelPoints[id].y0));
+            //ignore y direction (up/down)
             modelPoint3d.y = 0;
+            //difference in position
             var diff = vumarkPosition - modelPoint3d;
             Debug.Log(diff);
+            //calculate difference in hight to fit the graph 1.5 meters below eye level
             var heightDiff = (Camera.main.transform.position.y - 1.5f) - Instance.graph.transform.position.y;
+            //move the graph to the correct position
             Instance.graph.transform.position += new Vector3(diff.x, heightDiff, diff.z);
-
-            //switch (id)
-            //{
-            //    case 4:
-
-            //        Instance.graph.transform.position = new Vector3(vumarkTransform.x, vumarkTransform.y, vumarkTransform.z);
-            //        vumarkTransform.y = 0;
-            //        CenterPoint = vumarkTransform;
-            //        if (DirectionPoint != null)
-            //        {
-            //            CalcAndSetRotation();
-            //        }
-            //        break;
-            //    case 5:
-            //        vumarkTransform.y = 0;
-            //        DirectionPoint = vumarkTransform;
-            //        if(CenterPoint != null)
-            //        {
-            //            CalcAndSetRotation();
-            //        }
-            //        break;
-            //    default:
-            //        var modelPoint = modelPoints[id];
-            //        var modelPoint3d = Instance.graph.transform.TransformPoint(new Vector3(modelPoint.x, 0, modelPoint.y));
-            //        modelPoint3d.y = 0;
-            //        vumarkTransform.y = 0;
-            //        var diff = vumarkTransform - modelPoint3d;
-            //        Debug.Log(diff);
-            //        Instance.graph.transform.position += new Vector3(diff.x, 0, diff.z);
-            //        break;
-            //}
-            //if (actualPoints.ContainsKey(id))
-            //{
-            //    actualPoints[id] = point;
-
-            //    float[] axArray = { -modelPoints[id].y, modelPoints[id].x, 1, 0 };
-            //    A.SetRow(RowIdexes[id], axArray);
-
-            //    float[] ayArray = { modelPoints[id].x, modelPoints[id].y, 0, 1 };
-            //    A.SetRow(RowIdexes[id]+1, ayArray);
-
-            //    b[RowIdexes[id]] = actualPoints[id].x;
-            //    b[RowIdexes[id] + 1] = actualPoints[id].y;
-
-            //}
-            //else
-            //{
-            //    float[] axArray = { -modelPoints[id].y, modelPoints[id].x, 1, 0 };
-
-            //    float[] ayArray = { modelPoints[id].x, modelPoints[id].y, 0, 1 };
-
-            //    actualPoints.Add(id, point);
-
-            //    if (actualPoints.Count == 1)
-            //    {
-            //        A = new Matrix(2, 4);
-            //        b = new Vector(2);
-            //        RowIdexes[id] = 0;
-            //        A.SetRow(0, axArray);
-            //        A.SetRow(1, ayArray);
-            //        b[0] = actualPoints[id].x;
-            //        b[1] = actualPoints[id].y;
-            //    }
-            //    else
-            //    {
-            //        RowIdexes[id] = A.RowCount;
-            //        Matrix appendMatrix = new Matrix(2, 4);
-            //        appendMatrix.SetRow(0, axArray);
-            //        appendMatrix.SetRow(1, ayArray);
-            //        A = A.Stack(appendMatrix);
-            //        Vector appendVector = new Vector(2);
-            //        appendVector[0] = actualPoints[id].x;
-            //        appendVector[1] = actualPoints[id].y;
-            //        b = b.Append(appendVector);
-            //    }
-
-            //}
-
-            //if (actualPoints.Count > 1)
-            //    CalcTransform();
-
         }
         else
         {
             Debug.LogError("No point with id: " + id);
         }
     }
-
-    //static void CalcAndSetRotation()
-    //{
-    //    var modelPoint = modelPoints[5];
-    //    var modelPoint3d = Instance.graph.transform.TransformPoint(new Vector3(modelPoint.x, 0, modelPoint.y));
-    //    modelPoint3d.y = 0;
-    //    Vector3 v1 = modelPoint3d - CenterPoint;
-    //    Vector3 v2 = DirectionPoint - CenterPoint;
-    //    Instance.graph.transform.rotation *= Quaternion.FromToRotation(v1, v2);
-    //}
-
-    //public static int GetActualPointCount()
-    //{
-    //    return actualPoints.Count;
-    //}
-
-    //public static void CalcTransform()
-    //{
-    //    Matrix ATrans = A.Transpose();
-
-    //    Matrix ATransA = ATrans.Multiply(A);
-    //    Matrix CholeskyLower = ATransA.Cholesky();
-    //    Matrix CholeskyUpper = CholeskyLower.Transpose();
-
-    //    Vector z = CholeskyLower.ForwardSubstitution(ATrans.Multiply(b));
-    //    Vector c = CholeskyUpper.BackwardSubstitution(z);
-    //    var sin = c[0];
-    //    var cos = c[1];
-    //    var angle = Mathf.Atan2(sin, cos);
-    //    var res = new RTTransform
-    //    {
-    //        rotation = Mathf.Rad2Deg * angle,
-    //        x0 = c[2],
-    //        y0 = c[3]
-    //    };
-    //    Debug.Log(res.rotation + ", " + res.x0 + ", " + res.y0);
-    //    Instance.graph.AdjustGraph(res);
-    //}
-	
 }
 
+//small class to save position and rotation
 public class RTTransform
 {
     public float rotation = 0;

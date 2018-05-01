@@ -9,15 +9,6 @@ public class Edge : MonoBehaviour {
     Node node2;
     float dist;
 
-	// Use this for initialization
-	void Start () {
-    }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
-
     public void Instantiate(Node node1, Node node2, float dist)
     {
         this.node1 = node1;
@@ -45,7 +36,7 @@ public class Edge : MonoBehaviour {
         transform.Rotate(90f, 0f, 0f);
     }
 
-    public bool isMatch(int nodeId1, int nodeId2)
+    public bool IsMatch(int nodeId1, int nodeId2)
     {
         if ((node1.Id == nodeId1 && node2.Id == nodeId2) ||
             (node2.Id == nodeId1 && node1.Id == nodeId2))
