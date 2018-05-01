@@ -20,6 +20,7 @@ public class Graph : MonoBehaviour
     Dictionary<int, GameObject> initializedNodes = new Dictionary<int, GameObject>();
     // Dictionary with the id of the node and the name of the node
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
+    // VuMark locations and rotation in the graph
     public Dictionary<int, RTTransform> VuMarkLocations = new Dictionary<int, RTTransform>();
     public bool isNodesInitialized = false;
 
@@ -51,25 +52,39 @@ public class Graph : MonoBehaviour
         InitVuMarks();
     }
 
-    public void FindShortestPath(/*int startNodeId,*/ int endNodeId)
+    public void FindShortestPath(int endNodeId)
     {
+        //use closest node as startNode
         int startNodeId = FindClosestNode();
+        //list of ids that are visited 
         List<int> closedSet = new List<int>();
+        //list of ids that can be visitet from the current closed set
         List<int> openSet = new List<int>();
+        //add startnode to the openset
         openSet.Add(startNodeId);
+        //dictionary that stores pairs of ids for backtracking
         Dictionary<int, int> cameFrom = new Dictionary<int, int>();
+        //dictionary that stores the gscore for each nodeId. 
+        //The gscore(node) is the length of the path from the startnode to node
         Dictionary<int, float> gScore = new Dictionary<int, float>();
+        //dictionary that stores the fscore for each nodeId. 
+        //The fscore(node) is the length of the path from the startnode to node + the direct distance from node to the endnode
         Dictionary<int, float> fScore = new Dictionary<int, float>();
+        //initialize fscore and gscore to infinity for all nodes
         foreach (int nodeId in nodes.Keys)
         {
             gScore.Add(nodeId, Mathf.Infinity);
             fScore.Add(nodeId, Mathf.Infinity);
         }
+        //path length from startnode to startnode is 0
         gScore[startNodeId] = 0;
+        //fscore(startnode) = direct distance from startnode to endnode
         fScore[startNodeId] = Vector3.Distance(nodes[startNodeId].transform.position, nodes[endNodeId].transform.position);
 
+        //keep searching while there are still nodes that can be visited
         while (openSet.Count != 0)
         {
+            //find the node with the lowest fscore in the openset
             float minFScore = Mathf.Infinity;
             int currentId = -1;
             foreach (int id in openSet)
@@ -81,8 +96,10 @@ public class Graph : MonoBehaviour
                 }
             }
 
+            //if the node with the lowest fscore is the endnode we are done
             if (currentId == endNodeId)
             {
+                //backtrack to activate every node and edge in the calculated path
                 while (cameFrom.Keys.Contains(currentId))
                 {
                     nodes[currentId].gameObject.SetActive(true);
@@ -94,16 +111,21 @@ public class Graph : MonoBehaviour
                 return;
             }
 
+            //the node with the lowest fscore is moved to the closed set
             openSet.Remove(currentId);
             closedSet.Add(currentId);
+            //go through every neighbor
             foreach (int neighborId in nodes[currentId].NeighborIds)
             {
+                //if neighbor has been visited continue to next neighbor
                 if (closedSet.Contains(neighborId))
                     continue;
-
+                //if neighbor not in openset, add it
                 if (!openSet.Contains(neighborId))
                     openSet.Add(neighborId);
 
+                //see if the path to neighbor through the node with currentId is shorter 
+                //if not continue to next neighbor, else update the dictionaries with the new values
                 float newGScore = gScore[currentId] + Vector3.Distance(nodes[currentId].transform.position, nodes[neighborId].transform.position);
                 if (newGScore >= gScore[neighborId])
                     continue;
@@ -115,11 +137,6 @@ public class Graph : MonoBehaviour
         }
 
         Debug.Log("FEJL");
-    }
-
-    public void AdjustGraph(RTTransform rtt)
-    {
-        transform.SetPositionAndRotation(new Vector3(rtt.x0, transform.position.y, rtt.y0), Quaternion.Euler(0, -rtt.rotation, 0));
     }
 
     void InitEdges()
@@ -158,7 +175,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    // This method searches for the two home points and calculate the offset from origo
+    // This method searches for the home point and calculates the offset from origo
     private void FindOffset()
     {
         // The nodes data is stored in CSV format
@@ -265,9 +282,11 @@ public class Graph : MonoBehaviour
 
             VuMarkLocations.Add(vuMarkId,new RTTransform { x0 = nodeX, y0 = nodeY, rotation = angle});
         }
+        //add the vumarks to the anchorpointsmanager
         AnchorPointsManager.InitModelPoints(VuMarkLocations);
     }
 
+    //finds the closest node to the users current location by calculationg the distance to every node in the graph
     private int FindClosestNode()
     {
         int shortestDistanceNodeId = 0;
@@ -276,8 +295,7 @@ public class Graph : MonoBehaviour
 
         foreach (var node in initializedNodes)
         {
-            Vector3 nodePos = new Vector3(node.Value.transform.position.x, node.Value.transform.position.y, node.Value.transform.position.z);
-            float dist = Vector3.Distance(nodePos, currentPos);
+            float dist = Vector3.Distance(node.Value.transform.position, currentPos);
             if (dist < currentShortestDistance)
             {
                 currentShortestDistance = dist;
@@ -286,7 +304,4 @@ public class Graph : MonoBehaviour
         }
         return shortestDistanceNodeId;
     }
-
 }
-
-
