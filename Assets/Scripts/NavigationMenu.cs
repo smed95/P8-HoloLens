@@ -21,6 +21,8 @@ public class NavigationMenu : MonoBehaviour
     Dictionary<int, GameObject> buttonsInScene = new Dictionary<int, GameObject>();
     // Different tags, which is to be used to make the different filter functionalities.
     List<string> differentTypes = new List<string>();
+    //list for filterButtons.
+    List<GameObject> filterButtons = new List<GameObject>();
     // A Button object for the next and previous button these has to be set in unity
     // They are found by clicking the circle next to the empty field and selecting them in the scene tab
     public Button prevButton;
@@ -30,7 +32,7 @@ public class NavigationMenu : MonoBehaviour
     private float _yAfterSortButtons;
     private int currentPageNr = 0;
     private int previousPageNr = 0;
-    private int destinationsPrPage = 10;
+    private int destinationsPrPage = 12;
 
     // Use this for initialization
     void Start()
@@ -75,8 +77,9 @@ public class NavigationMenu : MonoBehaviour
 
             SetFilterButtons();
 
-            //SetButtonPositions(destinationNodes);
 
+            UpdateButtons();
+            InitialPrevAndNextButtonCheck();
             destinationNodesInitialized = true;
         }
     }
@@ -130,22 +133,23 @@ public class NavigationMenu : MonoBehaviour
     //}
 
     // Method to update the positions of the destination buttons, e.g. used in the SortDestinations method
-    void UpdateButtonPositions(Dictionary<int, GameObject> destNodes)
+    void UpdateButtonPositions(List<GameObject> filterButtons)
     {
-        int leftX = 5;
-        int rightX = 155;
+        int x = 55;
         int i = 0;
-        _y = _yAfterSortButtons;
-        foreach (var dn in destNodes)
+        _y = -47.5f;
+        foreach (var dn in filterButtons)
         {
-            if (i % 2 == 0)
+            if (i % 3 == 2)
             {
-                dn.Value.transform.localPosition = new Vector3(leftX, _y, 0);
+                dn.transform.localPosition = new Vector3(x, _y, 0);
+                x = 55;
+                _y -= 30;
             }
             else
             {
-                dn.Value.transform.localPosition = new Vector3(rightX, _y, 0);
-                _y -= 35;
+                dn.transform.localPosition = new Vector3(x, _y, 0);
+                x += 95;
             }
             i++;
         }
@@ -214,22 +218,22 @@ public class NavigationMenu : MonoBehaviour
     // Used to activate the needed destination buttons, for the pagination of the destination buttons. 
     void ActivateDestinations(int pageNr, bool activate = true)
     {
-        Dictionary<int, GameObject> buttonsToReposition = new Dictionary<int, GameObject>();
+        List<GameObject> buttonsToReposition = new List<GameObject>();
         int startIndex = pageNr * destinationsPrPage;
         int endIndex = (pageNr + 1) * destinationsPrPage;
-        if (endIndex > buttonsInScene.Count)
-            endIndex = buttonsInScene.Count;
+        if (endIndex > filterButtons.Count)
+            endIndex = filterButtons.Count;
 
         int i = 0;
-        foreach (var btn in buttonsInScene)
+        foreach (var btn in filterButtons)
         {
             if (i >= startIndex && i < endIndex)
             {
-                btn.Value.SetActive(activate);
-                buttonsToReposition.Add(btn.Key, btn.Value);
+                btn.SetActive(activate);
+                buttonsToReposition.Add(btn);
             }
             else
-                btn.Value.SetActive(!activate);
+                btn.SetActive(!activate);
             i++;
         }
         UpdateButtonPositions(buttonsToReposition);
@@ -238,34 +242,34 @@ public class NavigationMenu : MonoBehaviour
     // Used to go to the next page of the destination buttons, if possible
     public void NextPage()
     {
-        if ((currentPageNr + 1) * destinationsPrPage > buttonsInScene.Count)
+        if ((currentPageNr + 2) * destinationsPrPage >= differentTypes.Count)
         {
-            Debug.Log("Disabled next");
-            return;
+            Debug.Log("Setting next page GameObject inactive");
+            nextButton.gameObject.SetActive(false);
         }
-        else
-        {
-            previousPageNr = currentPageNr;
-            currentPageNr += 1;
-            UpdateButtons();
-        }
+
+        previousPageNr = currentPageNr;
+        currentPageNr += 1;
+        UpdateButtons();
+        prevButton.gameObject.SetActive(true);
+
     }
 
     // Used to go to the previous page of the destination buttons, if possible
     public void PrevPage()
     {
-        if ((currentPageNr - 1) * destinationsPrPage < 0)
+        if ((currentPageNr - 2) * destinationsPrPage < 0)
         {
-            Debug.Log("Disabled prev");
-            return;
+            Debug.Log("Setting prev page GameObject inactive");
+            prevButton.gameObject.SetActive(false);
         }
-        else
-        {
-            previousPageNr = currentPageNr;
-            currentPageNr -= 1;
-            UpdateButtons();
-        }
+
+        previousPageNr = currentPageNr;
+        currentPageNr -= 1;
+        UpdateButtons();
+        nextButton.gameObject.SetActive(true);
     }
+
 
     // Used to update the updarte the destination buttons, setting them either active or not, based on what is needed.
     void UpdateButtons()
@@ -308,6 +312,7 @@ public class NavigationMenu : MonoBehaviour
                 filterButton.GetComponentInChildren<Text>().text = type;
                 x += 95;
             }
+            filterButtons.Add(filterButton);
             i++;
         }
         _y -= 25;
@@ -341,5 +346,24 @@ public class NavigationMenu : MonoBehaviour
     public void CloseNavigationMenu()
     {
         navigationMenu.gameObject.SetActive(false);
+    }
+
+    public void FilterAllRooms()
+    {
+        FilterDestinations("");
+    }
+
+
+    private void InitialPrevAndNextButtonCheck()
+    {
+        prevButton.gameObject.SetActive(false);
+        if (filterButtons.Count < destinationsPrPage)
+        {
+            nextButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            nextButton.gameObject.SetActive(true);
+        }
     }
 }
