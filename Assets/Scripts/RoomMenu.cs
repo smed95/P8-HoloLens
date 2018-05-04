@@ -17,8 +17,6 @@ public class RoomMenu : MonoBehaviour
     // Dictionary with the nodes, which are possible destination for the user
     Dictionary<int, Node> _destinationNodes = new Dictionary<int, Node>();
     // Dictionary with the nodes which is presented to the viewer when a filter button is pressed.
-    Dictionary<int, Node> nodesToShow = new Dictionary<int, Node>();
-    //
     Dictionary<int, GameObject> filteredButtonsInScene = new Dictionary<int, GameObject>();
 
     public Button nextButton;
@@ -55,7 +53,12 @@ public class RoomMenu : MonoBehaviour
         Dictionary<int, GameObject> buttonsToReposition = new Dictionary<int, GameObject>();
         if (query == "")
         {
-            nodesToShow = _destinationNodes;
+            foreach (var button in buttonsInScene)
+            {
+                filteredButtonsInScene.Add(button.Key, buttonsInScene[button.Key]);
+                filteredButtonsInScene[button.Key].SetActive(true);
+                buttonsToReposition.Add(button.Key, buttonsInScene[button.Key]);
+            }
         }
 
         else
@@ -68,7 +71,8 @@ public class RoomMenu : MonoBehaviour
                 }
                 else
                 {
-                    nodesToShow.Add(dn.Key, dn.Value);
+                    filteredButtonsInScene.Add(dn.Key, buttonsInScene[dn.Key]);
+                    filteredButtonsInScene[dn.Key].SetActive(true);
                     buttonsToReposition.Add(dn.Key, buttonsInScene[dn.Key]);
                 }
             }
@@ -76,23 +80,15 @@ public class RoomMenu : MonoBehaviour
 
         InitialPrevAndNextButtonCheck();
 
-        foreach (var nts in nodesToShow)
-        {
-            buttonsInScene[nts.Key].SetActive(true);
-        }
-
         UpdateButtonPositions(buttonsToReposition);
 
-        ActivateDestinations(currentPageNr, false);
-        currentPageNr = 0;
-        previousPageNr = 0;
-        ActivateDestinations(currentPageNr, true);
+        UpdateButtons();
     }
 
     private void InitialPrevAndNextButtonCheck()
     {
         prevButton.gameObject.SetActive(false);
-        if (nodesToShow.Count < destinationsPrPage)
+        if (filteredButtonsInScene.Count < destinationsPrPage)
         {
             nextButton.gameObject.SetActive(false);
         }
@@ -160,18 +156,11 @@ public class RoomMenu : MonoBehaviour
     private void ActivateDestinations(int pageNr, bool activate = true)
     {
         Dictionary<int, GameObject> buttonsToReposition = new Dictionary<int, GameObject>();
-        filteredButtonsInScene = new Dictionary<int, GameObject>();
 
         int startIndex = pageNr * destinationsPrPage;
         int endIndex = (pageNr + 1) * destinationsPrPage;
         if (endIndex > buttonsInScene.Count)
             endIndex = buttonsInScene.Count;
-
-        foreach (var node in nodesToShow)
-        {
-            filteredButtonsInScene.Add(node.Key, buttonsInScene[node.Key]);
-        }
-
 
         int i = 0;
         foreach (var btn in filteredButtonsInScene)
@@ -191,7 +180,7 @@ public class RoomMenu : MonoBehaviour
     // Used to go to the next page of the destination buttons, if possible
     public void NextPage()
     {
-        if ((currentPageNr + 2) * destinationsPrPage >= nodesToShow.Count)
+        if ((currentPageNr + 2) * destinationsPrPage >= filteredButtonsInScene.Count)
         {
             Debug.Log("Setting next page GameObject inactive");
             nextButton.gameObject.SetActive(false);
@@ -236,12 +225,15 @@ public class RoomMenu : MonoBehaviour
 
     private void ResetMenu()
     {
-        nodesToShow = new Dictionary<int, Node>();
+        currentPageNr = 0;
+        previousPageNr = 0;
+
         foreach (var button in buttonsInScene.Values)
         {
             button.SetActive(false);
         }
         buttonsInScene = new Dictionary<int, GameObject>();
+        filteredButtonsInScene = new Dictionary<int, GameObject>();
     }
 
     // Used to start the navigation to an end point. Calls the "FindShortestPath" form the Graph class.
@@ -263,28 +255,31 @@ public class RoomMenu : MonoBehaviour
 
     public void InputFieldSearch(InputField input)
     {
-        Dictionary<int, GameObject> searchResult = new Dictionary<int, GameObject>();
-        string argument = "5";//input.text;
+        List<int> buttonsToRemove = new List<int>();
+        string argument = "4";//input.text;
         foreach (var btn in filteredButtonsInScene)
         {
             var buttonText = btn.Value.GetComponentInChildren<Text>().text;
             if (buttonText.Contains(argument))
             {
-                if (!filteredButtonsInScene.ContainsKey(btn.Key))
-                {
-                    filteredButtonsInScene.Add(btn.Key, btn.Value);
-                }
-
+                btn.Value.SetActive(true);
             }
             else
             {
                 if (filteredButtonsInScene.ContainsKey(btn.Key))
                 {
-                    filteredButtonsInScene.Remove(btn.Key);
+                    buttonsToRemove.Add(btn.Key);
                 }
             }
         }
-        UpdateButtonPositions(searchResult);
+
+        foreach (var buttonId in buttonsToRemove)
+        {
+            filteredButtonsInScene[buttonId].SetActive(false);
+            filteredButtonsInScene.Remove(buttonId);
+        }
+
+        UpdateButtonPositions(filteredButtonsInScene);
         ActivateDestinations(currentPageNr, false);
         currentPageNr = 0;
         previousPageNr = 0;
