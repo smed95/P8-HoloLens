@@ -18,6 +18,7 @@ public class RoomMenu : MonoBehaviour
     Dictionary<int, Node> _destinationNodes = new Dictionary<int, Node>();
     // Dictionary with the nodes which is presented to the viewer when a filter button is pressed.
     Dictionary<int, GameObject> filteredButtonsInScene = new Dictionary<int, GameObject>();
+    Dictionary<int, GameObject> buttonsRemovedFromSearch = new Dictionary<int, GameObject>();
 
     public Button nextButton;
     public Button prevButton;
@@ -31,7 +32,7 @@ public class RoomMenu : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        searchField.onValueChanged.AddListener(delegate { InputFieldSearch(searchField); });
+       searchField.onValueChanged.AddListener(delegate { InputFieldSearch(searchField); });
     }
 
     // Update is called once per frame
@@ -234,6 +235,7 @@ public class RoomMenu : MonoBehaviour
         }
         buttonsInScene = new Dictionary<int, GameObject>();
         filteredButtonsInScene = new Dictionary<int, GameObject>();
+        buttonsRemovedFromSearch=new Dictionary<int, GameObject>();
     }
 
     // Used to start the navigation to an end point. Calls the "FindShortestPath" form the Graph class.
@@ -255,8 +257,10 @@ public class RoomMenu : MonoBehaviour
 
     public void InputFieldSearch(InputField input)
     {
-        List<int> buttonsToRemove = new List<int>();
-        string argument = "4";//input.text;
+        List<int> buttonsToRemoveFromInScene = new List<int>();
+        List<int> buttonsToRemoveFromStorage = new List<int>();
+        string argument = input.text.Trim(' ');
+
         foreach (var btn in filteredButtonsInScene)
         {
             var buttonText = btn.Value.GetComponentInChildren<Text>().text;
@@ -268,16 +272,35 @@ public class RoomMenu : MonoBehaviour
             {
                 if (filteredButtonsInScene.ContainsKey(btn.Key))
                 {
-                    buttonsToRemove.Add(btn.Key);
+                    buttonsRemovedFromSearch.Add(btn.Key, btn.Value);
+                    buttonsToRemoveFromInScene.Add(btn.Key);
                 }
             }
         }
 
-        foreach (var buttonId in buttonsToRemove)
+        foreach (var button in buttonsRemovedFromSearch)
+        {
+            var buttonText = button.Value.GetComponentInChildren<Text>().text;
+            if (buttonText.Contains(argument))
+            {
+                button.Value.SetActive(true);
+                filteredButtonsInScene.Add(button.Key, button.Value);
+                buttonsToRemoveFromStorage.Add(button.Key);
+            }
+        }
+
+        foreach (var buttonId in buttonsToRemoveFromInScene)
         {
             filteredButtonsInScene[buttonId].SetActive(false);
             filteredButtonsInScene.Remove(buttonId);
         }
+
+        foreach (var buttonId in buttonsToRemoveFromStorage)
+        {
+            buttonsRemovedFromSearch[buttonId].SetActive(false);
+            buttonsRemovedFromSearch.Remove(buttonId);
+        }
+
 
         UpdateButtonPositions(filteredButtonsInScene);
         ActivateDestinations(currentPageNr, false);
