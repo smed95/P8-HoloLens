@@ -220,7 +220,7 @@ public class Graph : MonoBehaviour
             float pointX = (float.Parse(lineValues[1]) / MillimeterToMeter) - xOffset;
             float pointY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
             string pointName = lineValues[3];
-            string pointType = lineValues[4];
+            string pointType = lineValues[4].TrimEnd('\r');
 
             /* If a point exsist on the coordinates of the POI then it is reachable.
              * The additional label info is then added to the point and added to the list of

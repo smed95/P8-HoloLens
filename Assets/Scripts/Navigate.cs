@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class Navigate : MonoBehaviour, IInputClickHandler, IInputHandler
 {
-    NavigationMenu navigationMenu;
+    RoomMenu navigationMenu;
 
     // Use this for initialization
     void Start()
     {
-        navigationMenu = GetComponentInParent<NavigationMenu>();
+        navigationMenu = GetComponentInParent<RoomMenu>();
     }
 
     // Update is called once per frame
