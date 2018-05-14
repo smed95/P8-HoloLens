@@ -51,6 +51,22 @@ public class Graph : MonoBehaviour
         
         InitVuMarks();
     }
+    
+    public void setEdgesInactive()
+    {
+        foreach (var edge in edges)
+        {
+            edge.gameObject.SetActive(false);
+        }
+    }
+
+    public void setNodesInactive()
+    {
+        foreach (var node in nodes)
+        {
+            node.Value.gameObject.SetActive(false);
+        }
+    }
 
     public void FindShortestPath(int endNodeId)
     {
