@@ -5,9 +5,9 @@ using UnityEngine;
 public class Edge : MonoBehaviour {
 
 
-    Node node1;
-    Node node2;
-    float dist;
+    public Node node1;
+    public Node node2;
+    public float dist;
 
     public void Instantiate(Node node1, Node node2, float dist)
     {

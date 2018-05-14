@@ -7,7 +7,7 @@ public class Node : MonoBehaviour {
     public float X { get; private set; }
     public float Y { get; private set; }
     public int Id { get; private set; }
-    public List<int> NeighborIds = new List<int>();
+    //public List<int> NeighborIds = new List<int>();
     public string Type { get; set; }
     public string Name
     {

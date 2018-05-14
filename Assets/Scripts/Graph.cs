@@ -2,7 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.XR.WSA;
 using UnityEngine.XR.WSA.Persistence;
@@ -16,6 +19,10 @@ public class Graph : MonoBehaviour
     List<Edge> edges = new List<Edge>();
     // Contains ID for a node and the node reference
     Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+
+    float[,] dist;
+    int[][] next;
+
     // 
     Dictionary<int, GameObject> initializedNodes = new Dictionary<int, GameObject>();
     // Dictionary with the id of the node and the name of the node
@@ -47,96 +54,91 @@ public class Graph : MonoBehaviour
 
         InitPointsOfInterest();
 
-        InitNeighbours();
+        InitShortestPaths();
         
         InitVuMarks();
+
+        //FindShortestPath(33);
+    }
+
+    void InitShortestPaths()
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(int[][]));
+        if (!File.Exists(Application.streamingAssetsPath + "/next.xml"))
+        {
+            Debug.Log("calculating all pairs shortest path");
+            dist = new float[nodes.Count, nodes.Count];
+            next = new int[nodes.Count][];
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                next[i] = new int[nodes.Count];
+                for (int j = 0; j < nodes.Count; j++)
+                {
+                    dist[i, j] = Mathf.Infinity;
+                    next[i][j] = -1;
+                }
+            }
+
+            foreach (var e in edges)
+            {
+                dist[e.node1.Id, e.node2.Id] = e.dist;
+                dist[e.node2.Id, e.node1.Id] = e.dist;
+                next[e.node1.Id][e.node2.Id] = e.node2.Id;
+                next[e.node2.Id][ e.node1.Id] = e.node1.Id;
+            }
+
+            for (int k = 0; k < nodes.Count; k++)
+            {
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    for (int j = 0; j < nodes.Count; j++)
+                    {
+                        if (dist[i, k] + dist[k, j] < dist[i, j])
+                        {
+                            dist[i, j] = dist[i, k] + dist[k, j];
+                            var v = next[i][ k];
+                            next[i][ j] = v;
+                        }
+                    }
+                }
+            }
+            
+            FileStream nextFile = File.Create(Application.streamingAssetsPath + "/next.xml");
+            serializer.Serialize(nextFile, next);
+            nextFile.Dispose();
+        }
+        else
+        {
+            Debug.Log("loading all pairs shortest path");
+            Byte[] bytes = UnityEngine.Windows.File.ReadAllBytes(Application.streamingAssetsPath + "/next.xml");
+            string result = Encoding.ASCII.GetString(bytes);
+            next = (int[][])serializer.Deserialize(new StringReader(result));
+        }
+        
     }
 
     public void FindShortestPath(int endNodeId)
     {
+
         //use closest node as startNode
-        int startNodeId = FindClosestNode();
-        //list of ids that are visited 
-        List<int> closedSet = new List<int>();
-        //list of ids that can be visitet from the current closed set
-        List<int> openSet = new List<int>();
-        //add startnode to the openset
-        openSet.Add(startNodeId);
-        //dictionary that stores pairs of ids for backtracking
-        Dictionary<int, int> cameFrom = new Dictionary<int, int>();
-        //dictionary that stores the gscore for each nodeId. 
-        //The gscore(node) is the length of the path from the startnode to node
-        Dictionary<int, float> gScore = new Dictionary<int, float>();
-        //dictionary that stores the fscore for each nodeId. 
-        //The fscore(node) is the length of the path from the startnode to node + the direct distance from node to the endnode
-        Dictionary<int, float> fScore = new Dictionary<int, float>();
-        //initialize fscore and gscore to infinity for all nodes
-        foreach (int nodeId in nodes.Keys)
+        int currentNodeId = FindClosestNode();
+
+        if(next[currentNodeId][ endNodeId] == -1)
         {
-            gScore.Add(nodeId, Mathf.Infinity);
-            fScore.Add(nodeId, Mathf.Infinity);
+            Debug.Log("Fejl");
         }
-        //path length from startnode to startnode is 0
-        gScore[startNodeId] = 0;
-        //fscore(startnode) = direct distance from startnode to endnode
-        fScore[startNodeId] = Vector3.Distance(nodes[startNodeId].transform.position, nodes[endNodeId].transform.position);
-
-        //keep searching while there are still nodes that can be visited
-        while (openSet.Count != 0)
+        else
         {
-            //find the node with the lowest fscore in the openset
-            float minFScore = Mathf.Infinity;
-            int currentId = -1;
-            foreach (int id in openSet)
+            while (currentNodeId != endNodeId)
             {
-                if (fScore[id] < minFScore)
-                {
-                    minFScore = fScore[id];
-                    currentId = id;
-                }
+                nodes[currentNodeId].gameObject.SetActive(true);
+                int nextId = next[currentNodeId][ endNodeId];
+                edges.Find(e => e.IsMatch(currentNodeId, nextId)).gameObject.SetActive(true);
+                currentNodeId = nextId;
             }
+            nodes[currentNodeId].gameObject.SetActive(true);
 
-            //if the node with the lowest fscore is the endnode we are done
-            if (currentId == endNodeId)
-            {
-                //backtrack to activate every node and edge in the calculated path
-                while (cameFrom.Keys.Contains(currentId))
-                {
-                    nodes[currentId].gameObject.SetActive(true);
-                    int cameFromId = cameFrom[currentId];
-                    edges.Find(e => e.IsMatch(currentId, cameFromId)).gameObject.SetActive(true);
-                    currentId = cameFromId;
-                }
-                nodes[currentId].gameObject.SetActive(true);
-                return;
-            }
-
-            //the node with the lowest fscore is moved to the closed set
-            openSet.Remove(currentId);
-            closedSet.Add(currentId);
-            //go through every neighbor
-            foreach (int neighborId in nodes[currentId].NeighborIds)
-            {
-                //if neighbor has been visited continue to next neighbor
-                if (closedSet.Contains(neighborId))
-                    continue;
-                //if neighbor not in openset, add it
-                if (!openSet.Contains(neighborId))
-                    openSet.Add(neighborId);
-
-                //see if the path to neighbor through the node with currentId is shorter 
-                //if not continue to next neighbor, else update the dictionaries with the new values
-                float newGScore = gScore[currentId] + Vector3.Distance(nodes[currentId].transform.position, nodes[neighborId].transform.position);
-                if (newGScore >= gScore[neighborId])
-                    continue;
-
-                cameFrom[neighborId] = currentId;
-                gScore[neighborId] = newGScore;
-                fScore[neighborId] = newGScore + Vector3.Distance(nodes[neighborId].transform.position, nodes[endNodeId].transform.position);
-            }
         }
-
-        Debug.Log("FEJL");
     }
 
     void InitEdges()
@@ -151,20 +153,31 @@ public class Graph : MonoBehaviour
             float nodeStartY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
             float nodeEndX = (float.Parse(lineValues[3]) / MillimeterToMeter) - xOffset;
             float nodeEndY = (float.Parse(lineValues[4]) / MillimeterToMeter) - yOffset;
- 
-            // This should be made into a method since it is just repeated 
-            CheckAndInstantiateNode(nodeStartX, nodeStartY);
+            float dist = float.Parse(lineValues[5]) / MillimeterToMeter;
 
-            CheckAndInstantiateNode(nodeEndX, nodeEndY);
+            // This should be made into a method since it is just repeated 
+            Node nodeFrom = FindOrInstantiateNode(nodeStartX, nodeStartY);
+
+            Node nodeTo = FindOrInstantiateNode(nodeEndX, nodeEndY);
+
+            GameObject edgeObject = Instantiate(EdgePrefab, transform);
+            Edge edge = edgeObject.GetComponent<Edge>();
+            edge.Instantiate(nodeFrom, nodeTo, dist);
+            edges.Add(edge);
         }
-        
+
 
         isNodesInitialized = true;
     }
 
-    private void CheckAndInstantiateNode(float xCoordinate, float yCoordinate)
+    private Node FindOrInstantiateNode(float xCoordinate, float yCoordinate)
     {
-        if (!nodes.Any(node => node.Value.X == xCoordinate && node.Value.Y == yCoordinate))
+        Node n = nodes.Values.FirstOrDefault(node => node.X == xCoordinate && node.Y == yCoordinate);
+        if(n != null)
+        {
+            return n;
+        }
+        else
         {
             GameObject nodeObject = Instantiate(NodePrefab, transform);
             Node node = nodeObject.GetComponent<Node>();
@@ -172,6 +185,7 @@ public class Graph : MonoBehaviour
             nodes.Add(node.Id, node);
             initializedNodes.Add(node.Id, node.gameObject);
             idCounter++;
+            return node;
         }
     }
 
@@ -223,49 +237,7 @@ public class Graph : MonoBehaviour
             }
         }
     }
-
-    /* This method creates the edges between nodes if there exsists two nodes 
-     * according to the lines file.
-    */ 
-    private void InitNeighbours()
-    {
-        // The first line is labels
-        string[] lineSplit = LinesFile.text.Split('\n');
-        for (int i = 1; i < lineSplit.Length; i++)
-        {
-            // Each line contains two set of coordinates corresponding to each end point
-            string[] lineValues = lineSplit[i].Split(',');
-            float nodeStartX = (float.Parse(lineValues[1]) / MillimeterToMeter) - xOffset;
-            float nodeStartY = (float.Parse(lineValues[2]) / MillimeterToMeter) - yOffset;
-            float nodeEndX = (float.Parse(lineValues[3]) / MillimeterToMeter) - xOffset;
-            float nodeEndY = (float.Parse(lineValues[4]) / MillimeterToMeter) - yOffset;
-            float dist = float.Parse(lineValues[5]) / MillimeterToMeter;
-
-            /* The nodes list is searched for each of the two points
-             * If they both exsists then an edge is instansiated and added to the neighbor list
-             */
-            foreach (var nodeStart in nodes.Values)
-            {
-                if (nodeStart.X == nodeStartX && nodeStart.Y == nodeStartY)
-                {
-                    foreach (var nodeEnd in nodes.Values)
-                    {
-                        if (nodeEnd.X == nodeEndX && nodeEnd.Y == nodeEndY && nodeStart != nodeEnd)
-                        {
-                            Node nodeFrom = nodes[nodeStart.Id];
-                            Node nodeTo = nodes[nodeEnd.Id];
-                            GameObject edgeObject = Instantiate(EdgePrefab, transform);
-                            Edge edge = edgeObject.GetComponent<Edge>();
-                            edge.Instantiate(nodeFrom, nodeTo, dist);
-                            nodeFrom.NeighborIds.Add(nodeTo.Id);
-                            nodeTo.NeighborIds.Add(nodeFrom.Id);
-                            edges.Add(edge);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    
 
     // This method adds VuMark locations to the list of VuMarks
     private void InitVuMarks()
