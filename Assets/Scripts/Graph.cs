@@ -60,6 +60,22 @@ public class Graph : MonoBehaviour
 
         //FindShortestPath(33);
     }
+    
+    public void setEdgesInactive()
+    {
+        foreach (var edge in edges)
+        {
+            edge.gameObject.SetActive(false);
+        }
+    }
+
+    public void setNodesInactive()
+    {
+        foreach (var node in nodes)
+        {
+            node.Value.gameObject.SetActive(false);
+        }
+    }
 
     void InitShortestPaths()
     {

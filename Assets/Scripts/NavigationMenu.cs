@@ -9,6 +9,8 @@ public class NavigationMenu : MonoBehaviour
     public Graph graph;
     // The GameObject containing the entire navigation menu
     public GameObject navigationMenu;
+    //
+    public GameObject roomMenuCanvas;
     // Dictionary with the nodes, which are possible destination for the user
     public Dictionary<int, Node> destinationNodes = new Dictionary<int, Node>();
     // Boolean to check if the destination nodes have been initialized
@@ -320,7 +322,7 @@ public class NavigationMenu : MonoBehaviour
     }
 
     // Used to start the navigation to an end point. Calls the "FindShortestPath" form the Graph class.
-    public void Navigate(string nodeName)
+    /*public void Navigate(string nodeName)
     {
         int nodeId = 0;
         foreach (var dn in destinationNodes)
@@ -334,19 +336,30 @@ public class NavigationMenu : MonoBehaviour
         }
         graph.FindShortestPath(nodeId);
         CloseNavigationMenu();
-    }
+    }*/
 
     // Opens the navigation menu game object
     public void OpenNavigaitonMenu()
     {
         navigationMenu.gameObject.SetActive(true);
+        navigationMenuCanvas.gameObject.SetActive(true);
+        roomMenuCanvas.gameObject.SetActive(false);
+        foreach (var node in destinationNodes)
+        {
+            node.Value.gameObject.SetActive(false);
+        }
+
+        graph.setEdgesInactive();
+
+        graph.setNodesInactive();
+
     }
 
     // Closes the navigation menu game object
-    public void CloseNavigationMenu()
+    /*public void CloseNavigationMenu()
     {
         navigationMenu.gameObject.SetActive(false);
-    }
+    }*/
 
     public void FilterAllRooms()
     {

@@ -252,6 +252,7 @@ public class RoomMenu : MonoBehaviour
             }
         }
         graph.FindShortestPath(nodeId);
+        ResetMenu();
         roomMenu.gameObject.SetActive(false);
     }
 

@@ -3504,7 +3504,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1544215878}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c62fd7a55ba7458499b69cae18f83806, type: 3}
   m_Name: 
@@ -3539,7 +3539,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1544215878}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7d6513c2cdf97f409654a2a4114d9b1, type: 3}
   m_Name: 
@@ -4586,6 +4586,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graph: {fileID: 777451366}
   navigationMenu: {fileID: 700691419}
+  roomMenuCanvas: {fileID: 1238380982}
   navigationMenuCanvas: {fileID: 169258342}
   prevButton: {fileID: 1426835421}
   nextButton: {fileID: 200722996}
