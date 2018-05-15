@@ -9,6 +9,15 @@ public class AnchorPointsManager : Singleton<AnchorPointsManager>
     //reference to the graph
     public Graph graph;
 
+    // Reference to the introMessageBillboard
+    public GameObject IntroMessageBillboard;
+
+    // Reference to the navigationMenu
+    public GameObject NavigationMenu;
+
+    //Used for disabling introMessage after a VuMark has been found
+    private static bool _firstVuMarkFound = false;
+
     //Dictionary with the local positions and rotations of the vumarks in the graph
     static Dictionary<int, RTTransform> modelPoints = new Dictionary<int, RTTransform>();
 
@@ -20,6 +29,14 @@ public class AnchorPointsManager : Singleton<AnchorPointsManager>
     //function called when a vumark is detected
     public static void AddActualPoint(int id, Transform vumarkTransform)
     {
+        //When the first VuMark is found the intro message is disabled and the navigationmenu is enabled
+        if (_firstVuMarkFound == false)
+        {
+            _firstVuMarkFound = true;
+            Instance.IntroMessageBillboard.SetActive(false);
+            Instance.NavigationMenu.SetActive(true);
+        }
+
         //if the vumark id is in the graph model
         if (modelPoints.ContainsKey(id))
         {
