@@ -2428,9 +2428,9 @@ MonoBehaviour:
   EdgePrefab: {fileID: 1314633805402196, guid: f50cbbcceb6030b4186ba298c8e4af5c, type: 2}
   SpherePrefab: {fileID: 1992388172064858, guid: 61e35d834c12cee46a1291df45aa29e9,
     type: 2}
-  NodesFile: {fileID: 4900000, guid: cd28a246aee158d4ca48bc2d94176034, type: 3}
-  LinesFile: {fileID: 4900000, guid: 9cef89d693764fd4abfbf7e948d2a85b, type: 3}
-  VuMarksFile: {fileID: 4900000, guid: 85de51499f6fb54428ee1f6a9eacc0c6, type: 3}
+  NodesFile: {fileID: 4900000, guid: 15959ae5c7a2f24489e667c52889b9a7, type: 3}
+  LinesFile: {fileID: 4900000, guid: 374f9a0c51bc64844a9c89fd55585487, type: 3}
+  VuMarksFile: {fileID: 4900000, guid: 226a9fbd20084bb469c127d91c83f0c4, type: 3}
 --- !u!21 &800747638
 Material:
   serializedVersion: 6
